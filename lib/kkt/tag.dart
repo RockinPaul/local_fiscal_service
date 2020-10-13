@@ -1,14 +1,6 @@
 import 'package:local_fiscal_service/kkt/field_type.dart';
 
 class Tag {
-  final int code;
-  final FieldType type;
-  final int length;
-  final bool fixedLength;
-  static Map<int, Tag> codeMap = Map<int, Tag>();
-
-  const Tag(this.code, this.type, {this.length, this.fixedLength});
-
   static const Tag FD_NAME = Tag(1000, FieldType.STRING);
   static const Tag AUTOMATIC_MODE = Tag(1001, FieldType.BYTE);
   static const Tag AUTONOMOUS_MODE = Tag(1002, FieldType.BYTE);
@@ -379,4 +371,70 @@ class Tag {
     FieldType.STLV,
     length: 144,
   );
+
+  final int code;
+  final FieldType type;
+  final int length;
+  final bool fixedLength;
+  static Map<int, Tag> codeMap = {
+    FD_NAME.code: FD_NAME,
+    AUTOMATIC_MODE.code: AUTOMATIC_MODE,
+    AUTONOMOUS_MODE.code: AUTONOMOUS_MODE,
+    TICKET_TAX_SUMMARY.code: TICKET_TAX_SUMMARY,
+    TRANSFER_OPERATOR_ADDRESS.code: TRANSFER_OPERATOR_ADDRESS,
+    VAT_SUMMARY.code: VAT_SUMMARY,
+    ST_SUMMARY.code: ST_SUMMARY,
+    CUSTOMER_CONTACTS.code: CUSTOMER_CONTACTS,
+    PURCHASE_ADDRESS.code: PURCHASE_ADDRESS,
+    VAT_RATE.code: VAT_RATE,
+    VAT_SUM.code: VAT_SUM,
+    DATE_TIME.code: DATE_TIME,
+    KKT_NUMBER.code: KKT_NUMBER,
+    ST_RATE.code: ST_RATE,
+    ST_SUM.code: ST_SUM,
+    TRANSFER_OPERATOR_INN.code: TRANSFER_OPERATOR_INN,
+    OFD_INN.code: OFD_INN,
+    USER_INN.code: USER_INN,
+    TICKET_TOTAL_SUM.code: TICKET_TOTAL_SUM,
+    CASHIER.code: CASHIER,
+    OFD_RESPONSE_CODE.code: OFD_RESPONSE_CODE,
+    GOOD_QUANTITY.code: GOOD_QUANTITY,
+    OPERATION_TAX_SUMMARY.code: OPERATION_TAX_SUMMARY,
+    CORRECTION_TAX_SUMMARY.code: CORRECTION_TAX_SUMMARY,
+    TRANSFER_OPERATOR_NAME.code: TRANSFER_OPERATOR_NAME,
+    GOOD_NAME.code: GOOD_NAME,
+    TICKET_CASH_SUM.code: TICKET_CASH_SUM,
+    TRANSACTION_MACHINE_NUMBER.code: TRANSACTION_MACHINE_NUMBER,
+    KKT_REGISTER_NUMBER.code: KKT_REGISTER_NUMBER,
+    SHIFT_NUMBER.code: SHIFT_NUMBER,
+    FD_NUMBER.code: FD_NUMBER,
+    FN_SERIAL_NUMBER.code: FN_SERIAL_NUMBER,
+    TICKET_NUMBER.code: TICKET_NUMBER,
+    GOOD_COST.code: GOOD_COST,
+    PAYING_AGENT_OPERATION.code: PAYING_AGENT_OPERATION,
+    OFD_NAME.code: OFD_NAME,
+    USER_NAME.code: USER_NAME,
+    FN_EXPIRING.code: FN_EXPIRING,
+    FN_NEED_CHANGE.code: FN_NEED_CHANGE,
+    FN_FULL.code: FN_FULL,
+    OFD_NOT_RESPONDING.code: OFD_NOT_RESPONDING,
+    OPERATION_TYPE.code: OPERATION_TYPE,
+    TAX_SYSTEM.code: TAX_SYSTEM,
+    CIPHER_MARK.code: CIPHER_MARK,
+    AGENT_MARK.code: AGENT_MARK,
+    GOOD.code: GOOD,
+    FNS_SITE_ADDRESS.code: FNS_SITE_ADDRESS,
+    TAX_SYSTEMS_AVAILABLE.code: TAX_SYSTEMS_AVAILABLE,
+    OPERATOR_MESSAGE_FOR_FN.code: OPERATOR_MESSAGE_FOR_FN,
+    PAYING_AGENT_PHONE.code: PAYING_AGENT_PHONE,
+    PAYMENT_OPERATOR_PHONE.code: PAYMENT_OPERATOR_PHONE,
+    TRANSFER_OPERATOR_PHONE.code: TRANSFER_OPERATOR_PHONE,
+    DOCUMENT_FISCAL_MARK.code: DOCUMENT_FISCAL_MARK,
+    OPERATOR_FISCAL_MARK.code: OPERATOR_FISCAL_MARK,
+    GOOD_PRICE.code: GOOD_PRICE,
+    TICKET_ELECTRONIC_SUM.code: TICKET_ELECTRONIC_SUM,
+    USER_ATTRIBUTE.code: USER_ATTRIBUTE,
+  };
+
+  const Tag(this.code, this.type, {this.length, this.fixedLength});
 }
