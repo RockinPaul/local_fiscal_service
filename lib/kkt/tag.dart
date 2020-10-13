@@ -98,4 +98,81 @@ class Tag {
     length: 16,
     fixedLength: true,
   );
-}
+  static const Tag SHIFT_NUMBER = Tag(1038, FieldType.UINT32);
+  static const Tag FD_NUMBER = Tag(1040, FieldType.UINT32);
+  static const Tag FN_SERIAL_NUMBER = Tag(
+    1041,
+    FieldType.STRING,
+    length: 16,
+    fixedLength: true,
+  );
+  static const Tag TICKET_NUMBER = Tag(1042, FieldType.UINT32);
+  static const Tag GOOD_COST = Tag(1043, FieldType.VLN);
+  static const Tag PAYING_AGENT_OPERATION = Tag(
+    1044,
+    FieldType.STRING,
+    length: 24,
+  );
+  static const Tag OFD_NAME = Tag(
+    1046,
+    FieldType.STRING,
+    length: 256,
+  );
+  static const Tag USER_NAME = Tag(
+    1048,
+    FieldType.STRING,
+    length: 256,
+  );
+  static const Tag FN_EXPIRING = Tag(1050, FieldType.BYTE);
+  static const Tag FN_NEED_CHANGE = Tag(1051, FieldType.BYTE);
+  static const Tag FN_FULL = Tag(1052, FieldType.BYTE);
+  static const Tag OFD_NOT_RESPONDING = Tag(1053, FieldType.BYTE);
+  static const Tag OPERATION_TYPE = Tag(1054, FieldType.BYTE);
+  static const Tag TAX_SYSTEM = Tag(
+    1055,
+    FieldType.BITMASK,
+    length: 1,
+    fixedLength: true,
+  );
+  static const Tag CIPHER_MARK = Tag(1056, FieldType.BYTE);
+  static const Tag AGENT_MARK = Tag(
+    1057,
+    FieldType.BITMASK,
+    length: 1,
+    fixedLength: true,
+  );
+  static const Tag GOOD = Tag(1059, FieldType.STLV, length: 1024);
+  static const Tag FNS_SITE_ADDRESS = Tag(1060, FieldType.STRING, length: 256);
+  static const Tag TAX_SYSTEMS_AVAILABLE = Tag(1062, FieldType.BITMASK);
+  static const Tag OPERATOR_MESSAGE_FOR_FN = Tag(
+    1068,
+    FieldType.STLV,
+    length: 9,
+  );
+  static const Tag PAYING_AGENT_PHONE = Tag(
+    1073,
+    FieldType.STRING,
+    length: 19,
+  );
+  static const Tag PAYMENT_OPERATOR_PHONE = Tag(
+    1074,
+    FieldType.STRING,
+    length: 19,
+  );
+  static const Tag TRANSFER_OPERATOR_PHONE = Tag(
+    1075,
+    FieldType.STRING,
+    length: 19,
+  );
+  static const Tag DOCUMENT_FISCAL_MARK = Tag(
+    1077,
+    FieldType.BYTEARRAY,
+    length: 6,
+    fixedLength: true,
+  );
+  static const Tag OPERATOR_FISCAL_MARK = Tag(
+    1078,
+    FieldType.BYTEARRAY,
+    length: 16,
+  );
+  static const Tag GOOD_PRICE = Tag(1079, FieldType.VLN);
