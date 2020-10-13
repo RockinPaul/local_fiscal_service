@@ -236,4 +236,96 @@ class Tag {
     length: 216,
   );
   static const Tag TOTAL_TICKETS_AMOUNT = Tag(1134, FieldType.UINT32);
+  static const Tag OPERATION_TICKETS_AMOUNT = Tag(1135, FieldType.UINT32);
+  static const Tag OPERATION_CASH_SUM = Tag(1136, FieldType.VLN);
+  static const Tag OPERATION_ELECTRONIC_SUM = Tag(1138, FieldType.VLN);
+  static const Tag CORRECTION_TICKETS_AMOUNT = Tag(1144, FieldType.UINT32);
+  static const Tag CORRECTION_INCOME_COUNTERS = Tag(
+    1145,
+    FieldType.STLV,
+    length: 144,
+  );
+  static const Tag CORRECTION_EXPENDITURE_COUNTERS = Tag(
+    1146,
+    FieldType.STLV,
+    length: 144,
+  );
+  static const Tag CORRECTION_SELF_AMOUNT = Tag(1148, FieldType.UINT32);
+  static const Tag CORRECTION_FORCED_AMOUNT = Tag(1149, FieldType.UINT32);
+  static const Tag FN_SUMMARY_COUNTERS = Tag(
+    1157,
+    FieldType.STLV,
+    length: 708,
+  );
+  static const Tag UNCONFIRMED_SUMMARY_COUNTERS = Tag(
+    1158,
+    FieldType.STLV,
+    length: 708,
+  );
+  static const GOOD_NOMENCLATURE_CODE = Tag(
+    1162,
+    FieldType.BYTEARRAY,
+    length: 32,
+  );
+  static const SUPPLIER_PHONE = Tag(
+    1171,
+    FieldType.STRING,
+    length: 19,
+  );
+  static const CORRECTION_TYPE = Tag(
+    1173,
+    FieldType.BYTE,
+  );
+  static const CORRECTION_REASON = Tag(
+    1174,
+    FieldType.STLV,
+    length: 292,
+  );
+  static const CORRECTION_REASON_DESCRIPTION = Tag(
+    1177,
+    FieldType.STRING,
+    length: 256,
+  );
+  static const CORRECTION_REASON_DATE = Tag(1178, FieldType.UNIXTIME);
+  static const CORRECTION_REASON_NUMBER = Tag(
+    1179,
+    FieldType.STRING,
+    length: 32,
+  );
+  static const PURCHASE_PLACE = Tag(1187, FieldType.STRING, length: 256);
+  static const KKT_VERSION = Tag(1188, FieldType.STRING, length: 8);
+  static const KKT_DATA_FORMAT_VERSION = Tag(1189, FieldType.BYTE);
+  static const FN_DATA_FORMAT_VERSION = Tag(1190, FieldType.BYTE);
+  static const GOOD_ATTRIBUTE = Tag(1191, FieldType.STRING, length: 64);
+  static const TICKET_ATTRIBUTE = Tag(1192, FieldType.STRING, length: 16);
+  static const GAMBLE_MARK = Tag(1193, FieldType.BYTE);
+  static const SHIFT_SUMMARY_COUNTERS = Tag(1194, FieldType.STLV, length: 708);
+  static const QR_CODE = Tag(1196, FieldType.STRING);
+  static const GOOD_MEASURE = Tag(1197, FieldType.STRING, length: 16);
+  static const OPERATION_TOTAL_SUM = Tag(1201, FieldType.VLN);
+  static const CASHIER_INN = Tag(
+    1203,
+    FieldType.STRING,
+    length: 12,
+    fixedLength: false,
+  );
+  static const REREGISTRATION_REASON_CODES = Tag(
+    1205,
+    FieldType.BITMASK,
+    length: 4,
+    fixedLength: true,
+  );
+  static const OPERATOR_MESSAGE = Tag(
+    1206,
+    FieldType.BYTE,
+    length: 1,
+    fixedLength: true,
+  );
+  static const EXCISE_MARK = Tag(1207, FieldType.BYTE);
+  static const TICKET_SITE = Tag(1208, FieldType.STRING, length: 256);
+  static const DATA_FORMAT_VERSION = Tag(1209, FieldType.BYTE);
+  static const OPERATOR_MESSAGE_TEXT = Tag(1210, FieldType.STRING, length: 256);
+  static const GOOD_TYPE = Tag(1212, FieldType.BYTE);
+  static const KEYS_DAYS_LEFT = Tag(1213, FieldType.UINT16);
+  static const PAYMENT_TYPE = Tag(1214, FieldType.BYTE);
 }
