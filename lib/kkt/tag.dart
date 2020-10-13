@@ -328,4 +328,55 @@ class Tag {
   static const GOOD_TYPE = Tag(1212, FieldType.BYTE);
   static const KEYS_DAYS_LEFT = Tag(1213, FieldType.UINT16);
   static const PAYMENT_TYPE = Tag(1214, FieldType.BYTE);
+  static const TICKET_PREPAYMENT_SUM = Tag(1215, FieldType.VLN);
+  static const TICKET_POSTPAYMENT_SUM = Tag(1216, FieldType.VLN);
+  static const TICKET_BARTER_SUM = Tag(1217, FieldType.VLN);
+  static const OPERATION_PREPAYMENT_SUM = Tag(1218, FieldType.VLN);
+  static const OPERATION_POSTPAYMENT_SUM = Tag(1219, FieldType.VLN);
+  static const OPERATION_BARTER_SUM = Tag(1220, FieldType.VLN);
+  static const AUTOMATIC_PRINTER_MARK = Tag(1221, FieldType.BYTE);
+  static const GOOD_AGENT_TYPE = Tag(
+    1222,
+    FieldType.BITMASK,
+    length: 1,
+    fixedLength: true,
+  );
+  static const AGENT_DATA = Tag(1223, FieldType.STLV, length: 512);
+  static const SUPPLIER_DATA = Tag(1224, FieldType.STLV, length: 512);
+  static const SUPPLIER_NAME = Tag(1225, FieldType.STRING, length: 256);
+  static const SUPPLIER_INN = Tag(
+    1226,
+    FieldType.STRING,
+    length: 12,
+    fixedLength: false,
+  );
+  static const CUSTOMER = Tag(1227, FieldType.STRING, length: 256);
+  static const CUSTOMER_INN = Tag(
+    1228,
+    FieldType.STRING,
+    length: 12,
+    fixedLength: false,
+  );
+  static const EXCISE = Tag(1229, FieldType.VLN);
+  static const COUNTRY_CODE = Tag(
+    1230,
+    FieldType.STRING,
+    length: 3,
+    fixedLength: false,
+  );
+  static const CUSTOMS_DECLARATION_NUMBER = Tag(
+    1231,
+    FieldType.STRING,
+    length: 32,
+  );
+  static const CORRECTION_INCOME_RETURN_COUNTERS = Tag(
+    1232,
+    FieldType.STLV,
+    length: 144,
+  );
+  static const CORRECTION_EXPENDITURE_RETURN_COUNTERS = Tag(
+    1233,
+    FieldType.STLV,
+    length: 144,
+  );
 }
