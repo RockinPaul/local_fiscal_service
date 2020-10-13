@@ -376,6 +376,7 @@ class Tag {
   final FieldType type;
   final int length;
   final bool fixedLength;
+
   static Map<int, Tag> codeMap = {
     FD_NAME.code: FD_NAME,
     AUTOMATIC_MODE.code: AUTOMATIC_MODE,
@@ -513,4 +514,8 @@ class Tag {
   };
 
   const Tag(this.code, this.type, {this.length, this.fixedLength});
+  // final int code;
+  // final FieldType type;
+  // final int length;
+  // final bool fixedLength;
 }

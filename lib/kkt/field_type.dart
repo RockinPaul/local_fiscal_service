@@ -2,7 +2,7 @@ class Tuple {
   final int maxLength;
   final bool fixedLength;
 
-  const Tuple({this.maxLength, this.fixedLength});
+  const Tuple({this.maxLength = 0, this.fixedLength = false});
 }
 
 class FieldType {
@@ -20,6 +20,14 @@ class FieldType {
   static const FieldType STRING = FieldType(Tuple());
   static const FieldType BYTEARRAY = FieldType(Tuple());
   static const FieldType STLV = FieldType(Tuple());
+
+  int getMaxLength() {
+    return value.maxLength;
+  }
+
+  bool isFixedLength() {
+    return value.fixedLength;
+  }
 }
 
 // BYTE(1, true),
