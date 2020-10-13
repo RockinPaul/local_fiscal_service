@@ -176,3 +176,64 @@ class Tag {
     length: 16,
   );
   static const Tag GOOD_PRICE = Tag(1079, FieldType.VLN);
+  static const Tag TICKET_ELECTRONIC_SUM = Tag(1081, FieldType.VLN);
+  static const Tag USER_ATTRIBUTE = Tag(
+    1084,
+    FieldType.STLV,
+    length: 320,
+  );
+  static const Tag USER_ATTRIBUTE_NAME = Tag(
+    1085,
+    FieldType.STRING,
+    length: 64,
+  );
+  static const Tag USER_ATTRIBUTE_VALUE = Tag(
+    1086,
+    FieldType.STRING,
+    length: 256,
+  );
+  static const Tag UNCONFIRMED_FDS_AMOUNT = Tag(1097, FieldType.UINT32);
+  static const Tag FIRST_UNCONFIRMED_FD_TIMESTAMP = Tag(
+    1098,
+    FieldType.UNIXTIME,
+  );
+  static const Tag REREGISTRATION_REASON_CODE = Tag(1101, FieldType.BYTE);
+  static const Tag INTERNET_ONLY_KKT = Tag(1108, FieldType.BYTE);
+  static const Tag SERVICES_MARK = Tag(1109, FieldType.BYTE);
+  static const Tag AS_BSO_MARK = Tag(1110, FieldType.BYTE);
+  static const Tag SHIFT_FDS_AMOUNT = Tag(1111, FieldType.UINT32);
+  static const Tag FIRST_UNCONFIRMED_FD_NUMBER = Tag(1116, FieldType.UINT32);
+  static const Tag TICKET_SENDER_EMAIL = Tag(
+    1117,
+    FieldType.STRING,
+    length: 64,
+  );
+  static const Tag SHIFT_TICKETS_AMOUNT = Tag(1118, FieldType.UINT32);
+  static const Tag LOTTERY_MARK = Tag(1126, FieldType.BYTE);
+  static const Tag OPERATION_INCOME_COUNTERS = Tag(
+    1129,
+    FieldType.STLV,
+    length: 116,
+  );
+  static const Tag OPERATION_INCOME_RETURN_COUNTERS = Tag(
+    1130,
+    FieldType.STLV,
+    length: 116,
+  );
+  static const Tag OPERATION_EXPENDITURE_COUNTERS = Tag(
+    1131,
+    FieldType.STLV,
+    length: 116,
+  );
+  static const Tag OPERATION_EXPENDITURE_RETURN_COUNTERS = Tag(
+    1132,
+    FieldType.STLV,
+    length: 116,
+  );
+  static const Tag CORRECTION_TICKETS_COUNTERS = Tag(
+    1133,
+    FieldType.STLV,
+    length: 216,
+  );
+  static const Tag TOTAL_TICKETS_AMOUNT = Tag(1134, FieldType.UINT32);
+}
