@@ -507,10 +507,10 @@ static Tag CORRECTION_EXPENDITURE_RETURN_COUNTERS = Tag(
     length: 144,
   );
 
-  int code;
-  FieldType type;
-  int length;
-  bool fixedLength;
+  int _code;
+  FieldType _type;
+  int _length;
+  bool _fixedLength;
 
   static Map<int, Tag> codeMap = {
     FD_NAME.code: FD_NAME,
@@ -654,9 +654,21 @@ static Tag CORRECTION_EXPENDITURE_RETURN_COUNTERS = Tag(
   // final int length;
   // final bool fixedLength;
   Tag(int code, FieldType type, {int length, bool fixedLength}) {
-    this.code = code;
-    this.type = type;
-    this.length = length ?? type.getMaxLength();
-    this.fixedLength = fixedLength ?? type.isFixedLength();
+    this._code = code;
+    this._type = type;
+    this._length = length ?? type.getMaxLength();
+    this._fixedLength = fixedLength ?? type.isFixedLength();
+  }
+
+  int get code => _code;
+
+  FieldType get type => _type;
+
+  int get length => _length;
+
+  bool get isFixedLength => _fixedLength;
+
+  Tag getByCode(int code) {
+    return codeMap[code];
   }
 }
