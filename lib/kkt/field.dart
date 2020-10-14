@@ -11,7 +11,7 @@ class Field {
   static const int _DATA_OFFSET = 4;
   static const int HEADER_SIZE = _DATA_OFFSET;
 
-  Uint8List buffer;
+  Uint8List _buffer;
 
   Field(Tag tag, int length) {
     if (length < 0 || tag.length > 0 && length > tag.length) {
@@ -19,7 +19,7 @@ class Field {
     } else if (tag.isFixedLength && length != tag.length) {
       throw('Value\'s length must equal to ${tag.length} bytes.');
     }
-    buffer = Uint8List(length + HEADER_SIZE);
+    _buffer = Uint8List(length + HEADER_SIZE);
     _setTag(tag);
     _setLength(length);
   }
@@ -32,9 +32,22 @@ class Field {
     _setUint16(length, _LENGTH_OFFSET);
   }
 
+  Tag get tag => tag.getByCode(_getUint16(_TAG_OFFSET));
+  int get length => _getUint16(_LENGTH_OFFSET);
+  int get size => length + HEADER_SIZE;
+  Uint8List get buffer => buffer;
+
   _setUint16(int value, int offset) {
     Uint8List values = Uint8List.fromList([value, value >> 8]);
-    buffer[offset] = values[0];
-    buffer[offset + 1] = values[1];
+    _buffer[offset] = values[0];
+    _buffer[offset + 1] = values[1];
+  }
+
+  int _getUint16(int offset) {
+    return ((_buffer[offset + 1] & 0xFF) << 8) + (_buffer[offset] & 0xFF);
+  }
+
+  assign(Field other) {
+    // List.copyRange(apdu, dataOffset, data, 7, dataLength);
   }
 }
