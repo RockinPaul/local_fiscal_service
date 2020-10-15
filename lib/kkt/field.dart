@@ -13,7 +13,7 @@ class Field {
 
   Uint8List _buffer;
 
-  Field(Tag tag, int length) {
+  Field({Tag tag, int length}) {
     if (length < 0 || tag.length > 0 && length > tag.length) {
       throw('Value\'s length must not be more than ${tag.length} bytes.');
     } else if (tag.isFixedLength && length != tag.length) {
@@ -48,6 +48,27 @@ class Field {
   }
 
   assign(Field other) {
-    // List.copyRange(apdu, dataOffset, data, 7, dataLength);
+    List.copyRange(_buffer, 0, other.buffer, 0, other.buffer.length);
+  }
+
+  Field makeFromBuffer(Uint8List buffer, int offset) {
+    if (buffer.length + offset < HEADER_SIZE) {
+      return null;
+    }
+    Field field = Field();
+    List.copyRange(_buffer, 0, buffer, offset, offset + HEADER_SIZE);
+    if (field.tag == null) {
+      throw UnknownTagException(field._getUint16(0));
+    }
+    if (FieldType.STLV == field.tag.type) {
+      // return STLVField.makeFromBuffer(buffer, offset, field.getSize());
+    } else {
+      // return TLVField.makeFromBuffer(buffer, offset, field.getSize());
+    }
+  }
+
+  @override
+  int hashCode() {
+    return buffer.hashCode;
   }
 }
