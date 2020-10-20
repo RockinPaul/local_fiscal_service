@@ -4,6 +4,8 @@ import 'package:local_fiscal_service/exceptions/unknown_tag_exception.dart';
 import 'package:local_fiscal_service/utils/conversion_util.dart';
 import 'package:local_fiscal_service/kkt/tag.dart';
 import 'package:local_fiscal_service/kkt/field_type.dart';
+import 'package:local_fiscal_service/utils/conversion_util.dart';
+import 'package:characters/characters.dart';
 
 class Field {
   static const int _TAG_OFFSET = 0;
@@ -15,9 +17,9 @@ class Field {
 
   Field({Tag tag, int length}) {
     if (length < 0 || tag.length > 0 && length > tag.length) {
-      throw('Value\'s length must not be more than ${tag.length} bytes.');
+      throw ('Value\'s length must not be more than ${tag.length} bytes.');
     } else if (tag.isFixedLength && length != tag.length) {
-      throw('Value\'s length must equal to ${tag.length} bytes.');
+      throw ('Value\'s length must equal to ${tag.length} bytes.');
     }
     _buffer = Uint8List(length + HEADER_SIZE);
     _setTag(tag);
@@ -33,8 +35,11 @@ class Field {
   }
 
   Tag get tag => tag.getByCode(_getUint16(_TAG_OFFSET));
+
   int get length => _getUint16(_LENGTH_OFFSET);
+
   int get size => length + HEADER_SIZE;
+
   Uint8List get buffer => buffer;
 
   _setUint16(int value, int offset) {
@@ -68,7 +73,26 @@ class Field {
   }
 
   @override
-  int hashCode() {
-    return buffer.hashCode;
+  bool operator ==(Object other) => other is Field && other.buffer == buffer;
+
+  @override
+  int get hashCode => buffer.hashCode;
+
+  @override
+  String toString() {
+    Tag tag = this.tag;
+    String result = tag + "(" + tag.code + ")[" + length + "]: ";
+    if (tag.type == FieldType.BITMASK || tag.type == FieldType.BYTEARRAY) {
+      return result +
+          "0x" +
+          ConversionUtil.bytesToHex(
+            buffer,
+            offset: _DATA_OFFSET,
+          );
+    } else {
+      return result + value;
+    }
   }
+
+  Object get value => _buffer;
 }
