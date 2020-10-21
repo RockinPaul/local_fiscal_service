@@ -10,6 +10,7 @@ import 'package:local_fiscal_service/utils/conversion_util.dart';
 import 'package:local_fiscal_service/utils/list_extension.dart';
 import 'package:local_fiscal_service/utils/double_extension.dart';
 import 'package:local_fiscal_service/utils/uint8list_extension.dart';
+import 'package:local_fiscal_service/utils/int_extension.dart';
 
 class TLVField extends Field {
   // final String charset = CharsetConverter.;
@@ -37,10 +38,11 @@ class TLVField extends Field {
         } else {
           return getBitMask();
         }
+        break;
       case FieldType.UNIXTIME:
         return getUnixTime();
       case FieldType.UINT16:
-        return getUint16();
+        return getUint16(Field.DATA_OFFSET);
       case FieldType.UINT32:
         return getUint32();
       case FieldType.VLN:
@@ -49,7 +51,7 @@ class TLVField extends Field {
         return getFVLN();
       case FieldType.STLV:
       default:
-        return getBuffer();
+        return buffer;
     }
   }
 
@@ -70,13 +72,6 @@ class TLVField extends Field {
     buffer[Field.DATA_OFFSET] = value;
   }
 
-  int getUInt32() {
-    return (buffer[Field.DATA_OFFSET] & 0xFF)
-        + ((buffer[Field.DATA_OFFSET+1] & 0xFF) << 8)
-        + ((buffer[Field.DATA_OFFSET+2] & 0xFF) << 16)
-        + ((buffer[Field.DATA_OFFSET+3] & 0xFF) << 24);
-  }
-
   static TLVField makeBitMask(Tag tag, Uint8List value) {
     if(tag.type != FieldType.BITMASK) {
       throw new Exception("Tag must be of BITMASK type.");
@@ -89,7 +84,7 @@ class TLVField extends Field {
   }
 
   static TLVField makeByteArray(Tag tag, Uint8List value) {
-    if(tag.type != FieldType.BYTEARRAY) {
+    if (tag.type != FieldType.BYTEARRAY) {
       throw Exception("Tag must be of BYTEARRAY type.");
     }
     return TLVField(tag: tag, data: value, length: value.length);
@@ -105,7 +100,7 @@ class TLVField extends Field {
     if(tag.type != FieldType.VLN) {
       throw new Exception("Tag must be of VLN type.");
     }
-    Uint8List rawData = toByteArray(value);
+    Uint8List rawData = value.toByteArray();
     int index = 0;
     //skip all non-significant bytes
     while(index < rawData.length && rawData[index] == 0x00) {
@@ -132,7 +127,7 @@ class TLVField extends Field {
     if(tag.type != FieldType.FVLN) {
       throw Exception("Tag must be of FVLN type.");
     }
-    Uint8List rawData = toByteArray((value * 10).toInt());
+    Uint8List rawData = ((value * 10).toInt()).toByteArray();
     int index = 0;
     //skip all non-significant bytes
     while (index < rawData.length && rawData[index] == 0x00) {
@@ -153,12 +148,42 @@ class TLVField extends Field {
     //Adding zero in front to ensure positive value
     result[0] = 0x00;
     List.copyRange(result, 1, buffer, Field.DATA_OFFSET + 1, length - 1);
-    int unscaledValue = result.toList().swap(1, result.length);
-    return new BigDecimal(unscaledValue, buffer[DATA_OFFSET]);
+    int unscaledValue = result.swap(1, result.length).toInt();
+    return unscaledValue.toDouble();
   }
 
-  static Uint8List toByteArray(int value) =>
-      Uint8List(4)..buffer.asByteData().setInt32(0, value, Endian.little);
+  static TLVField makeString(Tag tag, String value) {
+    if(tag.type != FieldType.STRING) {
+      throw Exception("Tag must be of STRING type.");
+    }
+    Uint8List data = Uint8List.fromList(utf8.encode(value));
+    TLVField result = new TLVField(tag: tag, length: data.length);
+    result.setData(data);
+
+    return result;
+  }
+
+  String getString() {
+    return String.fromCharCodes(buffer, Field.DATA_OFFSET, length);
+  }
+
+  static TLVField makeUnixTime(Tag tag, DateTime value) {
+    if(tag.type != FieldType.UNIXTIME) {
+      throw Exception("Tag must be of UNIXTIME type.");
+    }
+    TLVField result = new TLVField(tag: tag, length: 4);
+    result.setUnixTime(value);
+    return result;
+  }
+
+  DateTime getUnixTime() {
+    return DateTime.fromMillisecondsSinceEpoch(getUint32()*1000);
+  }
+
+  void setUnixTime(DateTime value) {
+    setUint32(((value.millisecondsSinceEpoch)/1000).round());
+  }
+
   // setTag(Tag tag) {
   //   setUint16(tag.code, Field.TAG_OFFSET);
   // }
@@ -198,6 +223,20 @@ class TLVField extends Field {
 
   int getUint16(int offset) {
     return ((buffer[offset + 1] & 0xFF) << 8) + (buffer[offset] & 0xFF);
+  }
+
+  void setUint32(int value) {
+    buffer[Field.DATA_OFFSET] = value;
+    buffer[Field.DATA_OFFSET + 1] = value >> 8;
+    buffer[Field.DATA_OFFSET + 2] = value >> 16;
+    buffer[Field.DATA_OFFSET + 3] = value >> 24;
+  }
+
+  int getUint32() {
+    return (buffer[Field.DATA_OFFSET] & 0xFF)
+        + ((buffer[Field.DATA_OFFSET+1] & 0xFF) << 8)
+        + ((buffer[Field.DATA_OFFSET+2] & 0xFF) << 16)
+        + ((buffer[Field.DATA_OFFSET+3] & 0xFF) << 24);
   }
 
   static Field makeFromBuffer(Uint8List buffer, int offset) {

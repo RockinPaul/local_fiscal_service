@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:local_fiscal_service/utils/uint8list_extension.dart';
+
 extension ListSwap<T> on List<T> {
   List<T> swap(int index1, int index2) {
     var length = this.length;
@@ -9,5 +13,11 @@ extension ListSwap<T> on List<T> {
       this[index2] = tmp1;
     }
     return this;
+  }
+
+  int toInt() {
+    List<int> castList = this.cast<int>();
+    Uint8List bytes = Uint8List.fromList(castList);
+    return bytes.toInt();
   }
 }
