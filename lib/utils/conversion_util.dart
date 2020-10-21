@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:characters/characters.dart';
-import 'dart:convert';
 import 'package:local_fiscal_service/utils/int_extension.dart';
 import 'package:local_fiscal_service/kkt/tag.dart';
 

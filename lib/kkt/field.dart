@@ -4,14 +4,16 @@ import 'package:local_fiscal_service/exceptions/unknown_tag_exception.dart';
 import 'package:local_fiscal_service/utils/conversion_util.dart';
 import 'package:local_fiscal_service/kkt/tag.dart';
 import 'package:local_fiscal_service/kkt/field_type.dart';
+import 'package:local_fiscal_service/kkt/stlv_field.dart';
+import 'package:local_fiscal_service/kkt/tlv_field.dart';
 import 'package:local_fiscal_service/utils/conversion_util.dart';
 import 'package:characters/characters.dart';
 
 class Field {
-  static const int _TAG_OFFSET = 0;
-  static const int _LENGTH_OFFSET = 2;
-  static const int _DATA_OFFSET = 4;
-  static const int HEADER_SIZE = _DATA_OFFSET;
+  static const int TAG_OFFSET = 0;
+  static const int LENGTH_OFFSET = 2;
+  static const int DATA_OFFSET = 4;
+  static const int HEADER_SIZE = DATA_OFFSET;
 
   Uint8List _buffer;
 
@@ -23,20 +25,20 @@ class Field {
     }
     _buffer = Uint8List(length + HEADER_SIZE);
     _setTag(tag);
-    _setLength(length);
+    setLength(length);
   }
 
-  _setTag(Tag tag) {
-    _setUint16(tag.code, _TAG_OFFSET);
+  setTag(Tag tag) {
+    _setUint16(tag.code, TAG_OFFSET);
   }
 
-  _setLength(int length) {
-    _setUint16(length, _LENGTH_OFFSET);
+  setLength(int length) {
+    _setUint16(length, LENGTH_OFFSET);
   }
 
-  Tag get tag => tag.getByCode(_getUint16(_TAG_OFFSET));
+  Tag get tag => tag.getByCode(_getUint16(TAG_OFFSET));
 
-  int get length => _getUint16(_LENGTH_OFFSET);
+  int get length => _getUint16(LENGTH_OFFSET);
 
   int get size => length + HEADER_SIZE;
 
@@ -56,7 +58,7 @@ class Field {
     List.copyRange(_buffer, 0, other.buffer, 0, other.buffer.length);
   }
 
-  Field makeFromBuffer(Uint8List buffer, int offset) {
+  static Field makeFromBuffer(Uint8List buffer, {int offset = 0, int length = 0}) {
     if (buffer.length + offset < HEADER_SIZE) {
       return null;
     }
@@ -66,9 +68,10 @@ class Field {
       throw UnknownTagException(field._getUint16(0));
     }
     if (FieldType.STLV == field.tag.type) {
-      // return STLVField.makeFromBuffer(buffer, offset, field.getSize());
+      print("ANSER HERE");
+      return field.makeFromBuffer(buffer, offset: offset, length: field.size);
     } else {
-      // return TLVField.makeFromBuffer(buffer, offset, field.getSize());
+      return TLVField.makeFromBuffer(buffer, offset, field.size);
     }
   }
 
@@ -81,13 +84,13 @@ class Field {
   @override
   String toString() {
     Tag tag = this.tag;
-    String result = tag + "(" + tag.code + ")[" + length + "]: ";
+    String result = '$tag \"(${tag.code}\")[$length\]: ';
     if (tag.type == FieldType.BITMASK || tag.type == FieldType.BYTEARRAY) {
       return result +
           "0x" +
           ConversionUtil.bytesToHex(
             buffer,
-            offset: _DATA_OFFSET,
+            offset: DATA_OFFSET,
           );
     } else {
       return result + value;
