@@ -24,7 +24,7 @@ class Field {
       throw ('Value\'s length must equal to ${tag.length} bytes.');
     }
     _buffer = Uint8List(length + HEADER_SIZE);
-    _setTag(tag);
+    setTag(tag);
     setLength(length);
   }
 
@@ -34,6 +34,10 @@ class Field {
 
   setLength(int length) {
     _setUint16(length, LENGTH_OFFSET);
+  }
+
+  setBuffer(Uint8List buffer) {
+    _buffer = buffer;
   }
 
   Tag get tag => tag.getByCode(_getUint16(TAG_OFFSET));
@@ -63,13 +67,12 @@ class Field {
       return null;
     }
     Field field = Field();
-    List.copyRange(_buffer, 0, buffer, offset, offset + HEADER_SIZE);
+    List.copyRange(buffer, 0, buffer, offset, offset + HEADER_SIZE);
     if (field.tag == null) {
       throw UnknownTagException(field._getUint16(0));
     }
     if (FieldType.STLV == field.tag.type) {
-      print("ANSER HERE");
-      return field.makeFromBuffer(buffer, offset: offset, length: field.size);
+      return Field.makeFromBuffer(buffer, offset: offset, length: field.size);
     } else {
       return TLVField.makeFromBuffer(buffer, offset, field.size);
     }

@@ -16,8 +16,7 @@ class STLVField extends Field {
     return STLVField(tag: tag);
   }
 
-  @override
-  STLVField makeFromBuffer(Uint8List buffer, {int offset = 0, int length = 0}) {
+  static STLVField makeFromBuffer(Uint8List buffer, {int offset = 0, int length = 0}) {
     if (offset != null && length != null) {
       List.copyRange(buffer, 0, buffer, offset, offset + length);
       makeFromBuffer(buffer);
@@ -26,8 +25,8 @@ class STLVField extends Field {
       return null;
     }
     STLVField result = STLVField();
-    result.buffer = buffer;
-    if (result.buffer() == null) {
+    result.setBuffer(buffer);
+    if (result.buffer == null) {
       return null;
     }
     return result;
@@ -55,16 +54,16 @@ class STLVField extends Field {
     return this;
   }
 
-  // Tax utility methods
-  // static STLVField make(VATRate rate, long value) {
-  //   return make(rate, BigInteger.valueOf(value));
-  // }
-//
-//   public static STLVField make(VATRate rate, BigInteger value) {
-//     return STLVField.make(Tag.VAT_SUMMARY)
-//         .add(TLVField.makeByte(Tag.VAT_RATE, rate.code))
-//         .add(TLVField.makeVLN(Tag.VAT_SUM, value));
-//   }
+  //Tax utility methods
+  static STLVField make(VATRate rate, long value) {
+    return make(rate, BigInteger.valueOf(value));
+  }
+
+  static STLVField make(VATRate rate, BigInteger value) {
+    return STLVField.make(Tag.VAT_SUMMARY)
+        .add(TLVField.makeByte(Tag.VAT_RATE, rate.code))
+        .add(TLVField.makeVLN(Tag.VAT_SUM, value));
+  }
 //
 //   public static STLVField make(STRate rate, long value) {
 //     return make(rate, BigInteger.valueOf(value));
