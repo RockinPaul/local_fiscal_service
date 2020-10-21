@@ -668,7 +668,7 @@ static Tag CORRECTION_EXPENDITURE_RETURN_COUNTERS = Tag(
 
   bool get isFixedLength => _fixedLength;
 
-  Tag getByCode(int code) {
+  static Tag getByCode(int code) {
     return codeMap[code];
   }
 }

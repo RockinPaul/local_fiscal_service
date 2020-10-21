@@ -17,7 +17,7 @@ class Field {
 
   Uint8List _buffer;
 
-  Field({Tag tag, int length}) {
+  Field({Tag tag, int length, Uint8List data}) {
     if (length < 0 || tag.length > 0 && length > tag.length) {
       throw ('Value\'s length must not be more than ${tag.length} bytes.');
     } else if (tag.isFixedLength && length != tag.length) {
@@ -29,32 +29,32 @@ class Field {
   }
 
   setTag(Tag tag) {
-    _setUint16(tag.code, TAG_OFFSET);
+    setUint16(tag.code, TAG_OFFSET);
   }
 
   setLength(int length) {
-    _setUint16(length, LENGTH_OFFSET);
+    setUint16(length, LENGTH_OFFSET);
   }
 
   setBuffer(Uint8List buffer) {
     _buffer = buffer;
   }
 
-  Tag get tag => tag.getByCode(_getUint16(TAG_OFFSET));
+  Tag get tag => tag.getByCode(getUint16(TAG_OFFSET));
 
-  int get length => _getUint16(LENGTH_OFFSET);
+  int get length => getUint16(LENGTH_OFFSET);
 
   int get size => length + HEADER_SIZE;
 
   Uint8List get buffer => buffer;
 
-  _setUint16(int value, int offset) {
+  setUint16(int value, int offset) {
     Uint8List values = Uint8List.fromList([value, value >> 8]);
     _buffer[offset] = values[0];
     _buffer[offset + 1] = values[1];
   }
 
-  int _getUint16(int offset) {
+  int getUint16(int offset) {
     return ((_buffer[offset + 1] & 0xFF) << 8) + (_buffer[offset] & 0xFF);
   }
 
@@ -69,7 +69,7 @@ class Field {
     Field field = Field();
     List.copyRange(buffer, 0, buffer, offset, offset + HEADER_SIZE);
     if (field.tag == null) {
-      throw UnknownTagException(field._getUint16(0));
+      throw UnknownTagException(field.getUint16(0));
     }
     if (FieldType.STLV == field.tag.type) {
       return Field.makeFromBuffer(buffer, offset: offset, length: field.size);

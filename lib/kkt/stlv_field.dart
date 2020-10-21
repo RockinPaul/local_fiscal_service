@@ -3,6 +3,9 @@ import 'dart:typed_data';
 import 'package:local_fiscal_service/kkt/field.dart';
 import 'package:local_fiscal_service/kkt/field_type.dart';
 import 'package:local_fiscal_service/kkt/tag.dart';
+import 'package:local_fiscal_service/kkt/vat_rate.dart';
+import 'package:local_fiscal_service/kkt/st_rate.dart';
+import 'package:local_fiscal_service/kkt/tlv_field.dart';
 
 class STLVField extends Field {
 
@@ -12,7 +15,7 @@ class STLVField extends Field {
     fields = new List<Field>();
   }
 
-  STLVField make(Tag tag) {
+  static STLVField make(Tag tag) {
     return STLVField(tag: tag);
   }
 
@@ -55,11 +58,19 @@ class STLVField extends Field {
   }
 
   //Tax utility methods
-  static STLVField make(VATRate rate, long value) {
-    return make(rate, BigInteger.valueOf(value));
+  static STLVField makeWithVAT(VATRate rate, {int value = 0}) {
+    return STLVField.make(Tag.VAT_SUMMARY)
+        .add(TLVField.makeByte(Tag.VAT_RATE, rate.code))
+        .add(TLVField.makeVLN(Tag.VAT_SUM, value));
   }
 
-  static STLVField make(VATRate rate, BigInteger value) {
+  static STLVField makeWithST(STRate rate, {int value = 0}) {
+    return STLVField.make(Tag.VAT_SUMMARY)
+        .add(STLVField.makeByte(Tag.VAT_RATE, rate.code))
+        .add(STLVField.makeVLN(Tag.VAT_SUM, value));
+  }
+
+  static STLVField makeWithST(STRate rate, {int value = 0}) {
     return STLVField.make(Tag.VAT_SUMMARY)
         .add(TLVField.makeByte(Tag.VAT_RATE, rate.code))
         .add(TLVField.makeVLN(Tag.VAT_SUM, value));

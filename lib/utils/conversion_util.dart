@@ -20,7 +20,6 @@ class ConversionUtil {
     return bytes;
   }
 
-
   static int leToUInt32(Uint8List bytes, {int offset = 0}) {
     return (bytes[offset + 3] & 0xFF) << 24 |
     (bytes[offset + 2] & 0xFF) << 16 |
@@ -101,4 +100,44 @@ class ConversionUtil {
     }
     return hexChars.join();
   }
+
+  // FROM Java BigInteger implementation
+  // Uint8List toByteArray(int value) {
+  //   int byteLen = (value.bitLength / 8 + 1).toInt();
+  //   Uint8List byteArray = Uint8List(byteLen);
+  //
+  //   for (int i = byteLen - 1, bytesCopied = 4, nextInt = 0, intIndex = 0; i >= 0; i--) {
+  //     if (bytesCopied == 4) {
+  //       nextInt = getInt(intIndex++);
+  //       bytesCopied = 1;
+  //     } else {
+  //       nextInt = nextInt >>>= 8;
+  //   bytesCopied++;
+  //   }
+  //   byteArray[i] = (byte)nextInt;
+  //   }
+  //   return byteArray;
+  // }
+
+  // Returns the specified int of the little-endian two's complement
+  // representation (int 0 is the least significant).  The int number can
+  // be arbitrarily high (values are logically preceded by infinitely many
+  // sign ints).
+
+  // int getInt(int n) {
+  //   if (n < 0)
+  //     return 0;
+  //   if (n >= mag.length)
+  //     return signInt();
+  //
+  //   int magInt = mag[mag.length-n-1];
+  //
+  //   return (signum >= 0 ? magInt :
+  //   (n <= firstNonzeroIntNum() ? -magInt : ~magInt));
+  // }
+
+  /* Returns an int of sign bits */
+  // int signInt(int i) {
+  //   return i < 0 ? -1 : 0;
+  // }
 }
