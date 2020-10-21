@@ -8,9 +8,13 @@ import 'package:local_fiscal_service/utils/conversion_util.dart';
 
 
 class FnRecord {
+  // ignore: non_constant_identifier_names
   static final int TYPE_OFFSET = 0;
+  // ignore: non_constant_identifier_names
   static final int LENGTH_OFFSET = 2;
+  // ignore: non_constant_identifier_names
   static final int FIELDS_OFFSET = 4;
+  // ignore: non_constant_identifier_names
   static final int SIGNATURE_SIZE = 8;
   FnRecordType _type;
   int _length;
@@ -20,51 +24,58 @@ class FnRecord {
   int _fdNumber;
   Uint8List _fiscalMark;
 
+  // ignore: non_constant_identifier_names
   static final int DATA_FORMAT_VERSION = 0x01; //default for Tag.DATA_FORMAT_VERSION
+  // ignore: non_constant_identifier_names
   static final int HEADER_SIZE = FIELDS_OFFSET;
+  // ignore: non_constant_identifier_names
   static final int LENGTH_SIZE = FIELDS_OFFSET - LENGTH_OFFSET;
 
   static Map<FnRecordType, Set<Tag>> mandatoryTags = Map<FnRecordType, Set<Tag>>();
 
-  mandatoryTags.putIfAbsent(FnRecordType.REGISTRATION_REPORT, Set<Tag>.from([Tag.USER_INN,
-    Tag.DATE_TIME,
-    Tag.KKT_REGISTER_NUMBER,
-    Tag.OFD_INN,
-    Tag.FD_NUMBER,
-    Tag.FN_SERIAL_NUMBER]));
-  mandatoryTags.putIfAbsent(FnRecordType.OPEN_SHIFT_REPORT, Set<Tag>.from([
-  Tag.DATE_TIME,
-  Tag.SHIFT_NUMBER,
-  Tag.FD_NUMBER,
-  Tag.FN_SERIAL_NUMBER]));
-  mandatoryTags.putIfAbsent(FnRecordType.CURRENT_STATE_REPORT, Set<Tag>.from([
-  Tag.DATE_TIME,
-  Tag.UNCONFIRMED_FDS_AMOUNT,
-  Tag.FIRST_UNCONFIRMED_FD_TIMESTAMP,
-  Tag.FD_NUMBER,
-  Tag.FN_SERIAL_NUMBER]));
-  mandatoryTags.putIfAbsent(FnRecordType.TICKET, Set<Tag>.from([
-  Tag.DATE_TIME,
-  Tag.OPERATION_TYPE,
-  Tag.TICKET_TOTAL_SUM,
-  Tag.FD_NUMBER,
-  Tag.FN_SERIAL_NUMBER]));
-  mandatoryTags.putIfAbsent(FnRecordType.CLOSE_FN_REPORT, Set<Tag>.from([
-  Tag.DATE_TIME,
-  Tag.KKT_REGISTER_NUMBER,
-  Tag.FD_NUMBER,
-  Tag.FN_SERIAL_NUMBER]));
-  mandatoryTags.putIfAbsent(FnRecordType.OPERATOR_ACK, Set<Tag>.from([
-  Tag.OFD_INN,
-  Tag.FN_SERIAL_NUMBER,
-  Tag.FD_NUMBER,
-  Tag.DATE_TIME]));
+  mandatoryTagsInit() {
+    Set<Tag> set1 = Set.of([Tag.USER_INN,
+      Tag.DATE_TIME,
+      Tag.KKT_REGISTER_NUMBER,
+      Tag.OFD_INN,
+      Tag.FD_NUMBER,
+      Tag.FN_SERIAL_NUMBER]);
 
-  mandatoryTags.putIfAbsent(FnRecordType.CORRECTION_TICKET, mandatoryTags[FnRecordType.TICKET]);
-  mandatoryTags.putIfAbsent(FnRecordType.ACC_FORM, mandatoryTags[FnRecordType.TICKET]);
-  mandatoryTags.putIfAbsent(FnRecordType.CORRECTION_ACC_FORM, mandatoryTags[FnRecordType.TICKET]);
-  mandatoryTags.putIfAbsent(FnRecordType.REGISTRATION_CHANGE_REPORT, mandatoryTags[FnRecordType.REGISTRATION_REPORT]);
-  mandatoryTags.putIfAbsent(FnRecordType.CLOSE_SHIFT_REPORT, mandatoryTags[FnRecordType.OPEN_SHIFT_REPORT]);
+    mandatoryTags.putIfAbsent(FnRecordType.REGISTRATION_REPORT, set1);
+    mandatoryTags.putIfAbsent(FnRecordType.OPEN_SHIFT_REPORT, Set<Tag>.from([
+      Tag.DATE_TIME,
+      Tag.SHIFT_NUMBER,
+      Tag.FD_NUMBER,
+      Tag.FN_SERIAL_NUMBER]));
+    mandatoryTags.putIfAbsent(FnRecordType.CURRENT_STATE_REPORT, Set<Tag>.from([
+      Tag.DATE_TIME,
+      Tag.UNCONFIRMED_FDS_AMOUNT,
+      Tag.FIRST_UNCONFIRMED_FD_TIMESTAMP,
+      Tag.FD_NUMBER,
+      Tag.FN_SERIAL_NUMBER]));
+    mandatoryTags.putIfAbsent(FnRecordType.TICKET, Set<Tag>.from([
+      Tag.DATE_TIME,
+      Tag.OPERATION_TYPE,
+      Tag.TICKET_TOTAL_SUM,
+      Tag.FD_NUMBER,
+      Tag.FN_SERIAL_NUMBER]));
+    mandatoryTags.putIfAbsent(FnRecordType.CLOSE_FN_REPORT, Set<Tag>.from([
+      Tag.DATE_TIME,
+      Tag.KKT_REGISTER_NUMBER,
+      Tag.FD_NUMBER,
+      Tag.FN_SERIAL_NUMBER]));
+    mandatoryTags.putIfAbsent(FnRecordType.OPERATOR_ACK, Set<Tag>.from([
+      Tag.OFD_INN,
+      Tag.FN_SERIAL_NUMBER,
+      Tag.FD_NUMBER,
+      Tag.DATE_TIME]));
+
+    mandatoryTags.putIfAbsent(FnRecordType.CORRECTION_TICKET, mandatoryTags[FnRecordType.TICKET]);
+    mandatoryTags.putIfAbsent(FnRecordType.ACC_FORM, mandatoryTags[FnRecordType.TICKET]);
+    mandatoryTags.putIfAbsent(FnRecordType.CORRECTION_ACC_FORM, mandatoryTags[FnRecordType.TICKET]);
+    mandatoryTags.putIfAbsent(FnRecordType.REGISTRATION_CHANGE_REPORT, mandatoryTags[FnRecordType.REGISTRATION_REPORT]);
+    mandatoryTags.putIfAbsent(FnRecordType.CLOSE_SHIFT_REPORT, mandatoryTags[FnRecordType.OPEN_SHIFT_REPORT]);
+  }
 
   static bool isTagMandatory(FnRecordType docType, Tag tag) {
     return mandatoryTags[docType].contains(tag);
@@ -92,35 +103,35 @@ class FnRecord {
   }
 
   FnRecord(Uint8List buffer, bool includeSignature) {
-  int tailLen = (includeSignature ? SIGNATURE_SIZE : 0);
-  if (buffer == null || buffer.length < HEADER_SIZE + tailLen) {
-  throw Exception("Incorrect buffer size");
-  }
-  _type = FnRecordType.byCode(ConversionUtil.leToUInt16(buffer, TYPE_OFFSET));
-  this.length = ConversionUtil.leToUInt16(buffer, LENGTH_OFFSET);
-  int offset = FIELDS_OFFSET;
-  if(buffer.length > HEADER_SIZE + tailLen) {
-  try {
-  Field field = Field.makeFromBuffer(buffer, offset);
-  while(field != null) {
-  addField(field);
-  int fieldSize = field.getSize();
-  offset += fieldSize;
-  if(offset-HEADER_SIZE >= length) {
-  break;
-  }
-  field = Field.makeFromBuffer(buffer, offset);
-  }
-  } catch (UnknownTagException e) {
-  throw new IllegalArgumentException(e);
-  }
-  }
-  if(offset-HEADER_SIZE != length) {
-  throw new IllegalArgumentException("Incorrect input data format");
-  }
-  if(includeSignature) {
-  System.arraycopy(buffer, offset, signature, 0, SIGNATURE_SIZE);
-  }
+    int tailLen = (includeSignature ? SIGNATURE_SIZE : 0);
+    if (buffer == null || buffer.length < HEADER_SIZE + tailLen) {
+    throw Exception("Incorrect buffer size");
+    }
+    _type = FnRecordType.byCode(ConversionUtil.leToUInt16(buffer, offset: TYPE_OFFSET));
+    _length = ConversionUtil.leToUInt16(buffer, offset: LENGTH_OFFSET);
+    int offset = FIELDS_OFFSET;
+    if (buffer.length > HEADER_SIZE + tailLen) {
+      try {
+        Field field = Field.makeFromBuffer(buffer, offset: offset);
+          while (field != null) {
+            addField(field);
+            int fieldSize = field.size;
+            offset += fieldSize;
+            if(offset - HEADER_SIZE >= _length) {
+              break;
+            }
+          field = Field.makeFromBuffer(buffer, offset: offset);
+          }
+      } catch (e) {
+        throw new Exception(e);
+      }
+    }
+    if (offset - HEADER_SIZE != _length) {
+      throw new Exception("Incorrect input data format");
+    }
+    if (includeSignature) {
+      List.copyRange(_signature, 0, buffer, 0, SIGNATURE_SIZE);
+    }
   }
 
 // private FnRecord(byte[] buffer, boolean includeSignature) {
