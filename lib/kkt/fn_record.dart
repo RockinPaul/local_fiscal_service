@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:typed_data';
 
 import 'package:local_fiscal_service/kkt/field.dart';
@@ -31,34 +32,39 @@ class FnRecord {
   // ignore: non_constant_identifier_names
   static final int LENGTH_SIZE = FIELDS_OFFSET - LENGTH_OFFSET;
 
-  static Map<FnRecordType, Set<Tag>> mandatoryTags = Map<FnRecordType, Set<Tag>>();
+  static Map<FnRecordType, LinkedHashSet<Tag>> mandatoryTags = Map<FnRecordType, LinkedHashSet<Tag>>();
 
   mandatoryTagsInit() {
-    Set<Tag> set1 = Set.of([Tag.USER_INN,
+    var set1 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([Tag.USER_INN,
       Tag.DATE_TIME,
       Tag.KKT_REGISTER_NUMBER,
       Tag.OFD_INN,
       Tag.FD_NUMBER,
       Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags.update(FnRecordType.REGISTRATION_REPORT, set1);
 
-    mandatoryTags.putIfAbsent(FnRecordType.REGISTRATION_REPORT, set1);
-    mandatoryTags.putIfAbsent(FnRecordType.OPEN_SHIFT_REPORT, Set<Tag>.from([
-      Tag.DATE_TIME,
+    var set2 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([Tag.DATE_TIME,
       Tag.SHIFT_NUMBER,
       Tag.FD_NUMBER,
-      Tag.FN_SERIAL_NUMBER]));
-    mandatoryTags.putIfAbsent(FnRecordType.CURRENT_STATE_REPORT, Set<Tag>.from([
+      Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags.update(FnRecordType.OPEN_SHIFT_REPORT, set2);
+
+    var set3 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([
       Tag.DATE_TIME,
       Tag.UNCONFIRMED_FDS_AMOUNT,
       Tag.FIRST_UNCONFIRMED_FD_TIMESTAMP,
       Tag.FD_NUMBER,
-      Tag.FN_SERIAL_NUMBER]));
-    mandatoryTags.putIfAbsent(FnRecordType.TICKET, Set<Tag>.from([
+      Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags.update(FnRecordType.CURRENT_STATE_REPORT, set3);
+
+    var set4 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([
       Tag.DATE_TIME,
       Tag.OPERATION_TYPE,
       Tag.TICKET_TOTAL_SUM,
       Tag.FD_NUMBER,
-      Tag.FN_SERIAL_NUMBER]));
+      Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags.update(FnRecordType.TICKET, set4);
+
     mandatoryTags.putIfAbsent(FnRecordType.CLOSE_FN_REPORT, Set<Tag>.from([
       Tag.DATE_TIME,
       Tag.KKT_REGISTER_NUMBER,
