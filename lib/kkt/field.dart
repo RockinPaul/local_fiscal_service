@@ -79,7 +79,7 @@ class Field {
   }
 
   @override
-  bool operator ==(Object other) => other is Field && other.buffer == buffer;
+  bool operator == (Object other) => other is Field && other.buffer == buffer;
 
   @override
   int get hashCode => buffer.hashCode;
