@@ -40,7 +40,7 @@ class Field {
     _buffer = buffer;
   }
 
-  Tag get tag => tag.getByCode(getUint16(TAG_OFFSET));
+  Tag get tag => Tag.getByCode(getUint16(TAG_OFFSET));
 
   int get length => getUint16(LENGTH_OFFSET);
 
@@ -74,7 +74,7 @@ class Field {
     if (FieldType.STLV == field.tag.type) {
       return Field.makeFromBuffer(buffer, offset: offset, length: field.size);
     } else {
-      return TLVField.makeFromBuffer(buffer, offset, field.size);
+      return TLVField.makeFromBuffer(buffer, offset: offset, length: field.size);
     }
   }
 

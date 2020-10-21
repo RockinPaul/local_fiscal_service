@@ -239,7 +239,10 @@ class TLVField extends Field {
         + ((buffer[Field.DATA_OFFSET+3] & 0xFF) << 24);
   }
 
-  static Field makeFromBuffer(Uint8List buffer, int offset) {
+  static Field makeFromBuffer(Uint8List buffer, {int offset = 0, int length}) {
+    if (length != null) {
+      List.copyRange(buffer, 0, buffer, offset, offset + length);
+    }
     if (buffer == null || buffer.length + offset < Field.HEADER_SIZE) {
       return null;
     }
@@ -251,7 +254,7 @@ class TLVField extends Field {
     if (equals(FieldType.STLV, field.tag.type)) {
       return STLVField.makeFromBuffer(buffer, offset: offset, length: field.size);
     } else {
-      return TLVField.makeFromBuffer(buffer, offset);
+      return TLVField.makeFromBuffer(buffer, offset: offset);
     }
   }
 

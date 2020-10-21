@@ -66,47 +66,29 @@ class STLVField extends Field {
 
   static STLVField makeWithST(STRate rate, {int value = 0}) {
     return STLVField.make(Tag.VAT_SUMMARY)
-        .add(STLVField.makeByte(Tag.VAT_RATE, rate.code))
-        .add(STLVField.makeVLN(Tag.VAT_SUM, value));
-  }
-
-  static STLVField makeWithST(STRate rate, {int value = 0}) {
-    return STLVField.make(Tag.VAT_SUMMARY)
         .add(TLVField.makeByte(Tag.VAT_RATE, rate.code))
         .add(TLVField.makeVLN(Tag.VAT_SUM, value));
   }
-//
-//   public static STLVField make(STRate rate, long value) {
-//     return make(rate, BigInteger.valueOf(value));
-//   }
-//
-//   public static STLVField make(STRate rate, BigInteger value) {
-//     return STLVField.make(Tag.ST_SUMMARY)
-//         .add(TLVField.makeByte(Tag.ST_RATE, rate.code))
-//         .add(TLVField.makeVLN(Tag.ST_SUM, value));
-//   }
-//
-//   public List<Field> getFields() {
-//     if (fields != null) {
-//       return fields;
-//     } else {
-//       try {
-//         List<Field> result = new ArrayList<>();
-//         int offset = DATA_OFFSET;
-//
-// //                Field field = makeFromBuffer(buffer, offset);
-//         Field field;
-//         do  {
-//           field = makeFromBuffer(buffer, offset);
-//           result.add(field);
-//           offset = offset + field.getSize();
-//         } while (offset != buffer.length);
-//         return result;
-//       } catch (UnknownTagException e) {
-//     throw new IllegalArgumentException("Lazy deserialization exception : " + e.getMessage(), e);
-//     }
-//   }
-//   }
+
+  List<Field> getFields() {
+    if (fields != null) {
+      return fields;
+    } else {
+      try {
+        List<Field> result = List<Field>();
+        int offset = Field.DATA_OFFSET;
+        Field field;
+        do {
+          field = makeFromBuffer(buffer, offset: offset);
+          result.add(field);
+          offset = offset + field.size;
+        } while (offset != buffer.length);
+        return result;
+      } catch (e) {
+        throw Exception("Lazy deserialization exception : $e");
+      }
+    }
+  }
 //
 //   /**
 //    * Use {@link STLVField#getFields()} and {@link STLVField#getFieldByTag(Tag, List)}
