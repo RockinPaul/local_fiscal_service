@@ -8,6 +8,8 @@ import 'package:local_fiscal_service/kkt/tag.dart';
 import 'package:local_fiscal_service/kkt/stlv_field.dart';
 import 'package:local_fiscal_service/utils/conversion_util.dart';
 import 'package:local_fiscal_service/utils/list_extension.dart';
+import 'package:local_fiscal_service/utils/double_extension.dart';
+import 'package:local_fiscal_service/utils/uint8list_extension.dart';
 
 class TLVField extends Field {
   // final String charset = CharsetConverter.;
@@ -115,6 +117,44 @@ class TLVField extends Field {
     TLVField result = new TLVField(tag: tag, length: data.length);
     result.setData(data);
     return result;
+  }
+
+  int getVLN() {
+    Uint8List result = Uint8List(length + 1);
+    //Adding zero in front to ensure positive value
+    result[0] = 0x00;
+    List.copyRange(result, 1, buffer, 0, length);
+    result.swap(1, result.length);
+    return result.toInt();
+  }
+
+  static TLVField makeFVLN(Tag tag, double value) {
+    if(tag.type != FieldType.FVLN) {
+      throw Exception("Tag must be of FVLN type.");
+    }
+    Uint8List rawData = toByteArray((value * 10).toInt());
+    int index = 0;
+    //skip all non-significant bytes
+    while (index < rawData.length && rawData[index] == 0x00) {
+      index++;
+    }
+    Uint8List data = Uint8List(rawData.length - index + 1);
+    //Setting decimal point position to first byte
+    data[0] = value.scale();
+    List.copyRange(data, index, rawData, 1, rawData.length - index);
+    data.swap(1, data.length);
+    TLVField result = new TLVField(tag: tag, length: data.length);
+    result.setData(data);
+    return result;
+  }
+
+  double getFVLN() {
+    Uint8List result = Uint8List(length);
+    //Adding zero in front to ensure positive value
+    result[0] = 0x00;
+    List.copyRange(result, 1, buffer, Field.DATA_OFFSET + 1, length - 1);
+    int unscaledValue = result.toList().swap(1, result.length);
+    return new BigDecimal(unscaledValue, buffer[DATA_OFFSET]);
   }
 
   static Uint8List toByteArray(int value) =>

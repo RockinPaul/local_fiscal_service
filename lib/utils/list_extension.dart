@@ -1,5 +1,5 @@
 extension ListSwap<T> on List<T> {
-  void swap(int index1, int index2) {
+  List<T> swap(int index1, int index2) {
     var length = this.length;
     RangeError.checkValidIndex(index1, this, "index1", length);
     RangeError.checkValidIndex(index2, this, "index2", length);
@@ -8,5 +8,6 @@ extension ListSwap<T> on List<T> {
       this[index1] = this[index2];
       this[index2] = tmp1;
     }
+    return this;
   }
 }
