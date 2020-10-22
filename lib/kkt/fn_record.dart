@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:local_fiscal_service/kkt/field.dart';
@@ -6,6 +7,7 @@ import 'package:local_fiscal_service/kkt/stlv_field.dart';
 import 'package:local_fiscal_service/kkt/field_type.dart';
 import 'package:local_fiscal_service/kkt/fn_record_type.dart';
 import 'package:local_fiscal_service/kkt/tag.dart';
+import 'package:local_fiscal_service/kkt/tlv_field.dart';
 import 'package:local_fiscal_service/utils/conversion_util.dart';
 
 
@@ -113,14 +115,15 @@ class FnRecord {
   }
 //
   FnRecord.withBuffer(Uint8List buffer) {
-    mandatoryTagsInit();
-    this(buffer, true);
+    FnRecord(buffer, true);
   }
 
   FnRecord(Uint8List buffer, bool includeSignature) {
+    mandatoryTagsInit();
+
     int tailLen = (includeSignature ? SIGNATURE_SIZE : 0);
     if (buffer == null || buffer.length < HEADER_SIZE + tailLen) {
-    throw Exception("Incorrect buffer size");
+      throw Exception("Incorrect buffer size");
     }
     _type = FnRecordType.byCode(ConversionUtil.leToUInt16(buffer, offset: TYPE_OFFSET));
     _length = ConversionUtil.leToUInt16(buffer, offset: LENGTH_OFFSET);
@@ -149,64 +152,28 @@ class FnRecord {
     }
   }
 
-// private FnRecord(byte[] buffer, boolean includeSignature) {
-// int tailLen = (includeSignature ? SIGNATURE_SIZE : 0);
-// if(buffer == null || buffer.length < HEADER_SIZE + tailLen) {
-// throw new IllegalArgumentException("Incorrect buffer size");
-// }
-// this.type = FnRecordType.byCode(ConversionUtil.leToUInt16(buffer, TYPE_OFFSET));
-// this.length = ConversionUtil.leToUInt16(buffer, LENGTH_OFFSET);
-// int offset = FIELDS_OFFSET;
-// if(buffer.length > HEADER_SIZE + tailLen) {
-// try {
-// Field field = Field.makeFromBuffer(buffer, offset);
-// while(field != null) {
-// addField(field);
-// int fieldSize = field.getSize();
-// offset += fieldSize;
-// if(offset-HEADER_SIZE >= length) {
-// break;
-// }
-// field = Field.makeFromBuffer(buffer, offset);
-// }
-// } catch (UnknownTagException e) {
-// throw new IllegalArgumentException(e);
-// }
-// }
-// if(offset-HEADER_SIZE != length) {
-// throw new IllegalArgumentException("Incorrect input data format");
-// }
-// if(includeSignature) {
-// System.arraycopy(buffer, offset, signature, 0, SIGNATURE_SIZE);
-// }
-// }
-//
-// public static FnRecord construct(byte[] buffer) {
-// return new FnRecord(buffer, true);
-// }
-//
-// public static FnRecord constructWithoutSignature(byte[] buffer) {
-// return new FnRecord(buffer, false);
-// }
-//
-// public FnRecordType getType() {
-//   return type;
-// }
-//
-// public int getLength() {
-//   return length;
-// }
-//
-// public byte[] getHeaderBuffer() {
-//   byte[] result = new byte[HEADER_SIZE];
-//   ConversionUtil.uint16ToLe(type.code, result, TYPE_OFFSET);
-//   ConversionUtil.uint16ToLe(length, result, LENGTH_OFFSET);
-//   return result;
-// }
-//
-// public List<Field> getFields() {
-//   return fields;
-// }
+
+  static FnRecord construct(Uint8List buffer) {
+    return FnRecord(buffer, true);
+  }
+
+  static FnRecord constructWithoutSignature(Uint8List buffer) {
+    return new FnRecord(buffer, false);
+  }
+
+  FnRecordType get type => _type;
+
+  int get length => _length;
+
+  Uint8List getHeaderBuffer() {
+    Uint8List result = Uint8List(HEADER_SIZE);
+    ConversionUtil.uint16ToLe(result, value: type.code, offset: TYPE_OFFSET);
+    ConversionUtil.uint16ToLe(result, value: _length , offset: LENGTH_OFFSET);
+    return result;
+  }
+
+  List<Field> get fields => _fields;
+
  Field getFieldByTag(Tag tag) {
   return STLVField.getFieldByTag(tag, _fields);
 }
@@ -303,16 +270,17 @@ class FnRecord {
 //   return result;
 // }
 //
-// private void addField(Field field) {
-//   if(field.getTag() == Tag.FN_SERIAL_NUMBER) {
-//     fnNumber = ((TLVField)field).getString();
-//   } else if(field.getTag() == Tag.FD_NUMBER) {
-//     fdNumber = ((TLVField)field).getUInt32();
-//   } else if(field.getTag() == Tag.DOCUMENT_FISCAL_MARK) {
-//     fiscalMark = ((TLVField)field).getByteArray();
-//   }
-//   fields.add(field);
-// }
+ void addField(Field field) {
+    TLVField tlvField = field;
+    if (field.tag == Tag.FN_SERIAL_NUMBER) {
+      _fnNumber = tlvField.getString();
+    } else if (field.tag == Tag.FD_NUMBER) {
+      _fdNumber = tlvField.getUint32();
+    } else if(field.tag == Tag.DOCUMENT_FISCAL_MARK) {
+      _fiscalMark = tlvField.getByteArray();
+    }
+    _fields.add(field);
+}
 //
 // public List<byte[]> serializeFields() {
 //   return serializeFields(fields);
