@@ -6,7 +6,10 @@ import 'package:local_fiscal_service/kkt/tag.dart';
 class ConversionUtil {
 
   static int leToUInt16(Uint8List bytes, {int offset = 0}) {
-    return (bytes[offset + 1] & 0xFF) << 8 | (bytes[offset] & 0xFF);
+    // return (bytes[offset + 1] & 0xFF) << 8 | (bytes[offset] & 0xFF);
+    ByteData byteData = ByteData.view(bytes.buffer);
+    int short = byteData.getInt16(0, Endian.little);
+    return short;
   }
 
   static Uint8List uint16ToLe(Uint8List bytes, {int value, int offset = 0}) {
