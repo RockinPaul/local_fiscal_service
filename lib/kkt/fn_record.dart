@@ -38,66 +38,98 @@ class FnRecord {
   static Map<FnRecordType, LinkedHashSet<Tag>> mandatoryTags = Map<FnRecordType, LinkedHashSet<Tag>>();
 
   mandatoryTagsInit() {
-    var set1 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([Tag.USER_INN,
+    // var set1 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([Tag.USER_INN,
+    //   Tag.DATE_TIME,
+    //   Tag.KKT_REGISTER_NUMBER,
+    //   Tag.OFD_INN,
+    //   Tag.FD_NUMBER,
+    //   Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags[FnRecordType.REGISTRATION_REPORT] = LinkedHashSet<Tag>.from([Tag.USER_INN,
       Tag.DATE_TIME,
       Tag.KKT_REGISTER_NUMBER,
       Tag.OFD_INN,
       Tag.FD_NUMBER,
       Tag.FN_SERIAL_NUMBER]);
-    mandatoryTags.update(FnRecordType.REGISTRATION_REPORT, set1);
+    // mandatoryTags.update(FnRecordType.REGISTRATION_REPORT, set1);
 
-    var set2 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([Tag.DATE_TIME,
+    // var set2 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([Tag.DATE_TIME,
+    //   Tag.SHIFT_NUMBER,
+    //   Tag.FD_NUMBER,
+    //   Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags[FnRecordType.OPEN_SHIFT_REPORT] = LinkedHashSet<Tag>.from([Tag.DATE_TIME,
       Tag.SHIFT_NUMBER,
       Tag.FD_NUMBER,
       Tag.FN_SERIAL_NUMBER]);
-    mandatoryTags.update(FnRecordType.OPEN_SHIFT_REPORT, set2);
+    // mandatoryTags.update(FnRecordType.OPEN_SHIFT_REPORT, set2);
 
-    var set3 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
+    // var set3 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
+    //   Tag.DATE_TIME,
+    //   Tag.UNCONFIRMED_FDS_AMOUNT,
+    //   Tag.FIRST_UNCONFIRMED_FD_TIMESTAMP,
+    //   Tag.FD_NUMBER,
+    //   Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags[FnRecordType.CURRENT_STATE_REPORT] = LinkedHashSet<Tag>.from([
       Tag.DATE_TIME,
       Tag.UNCONFIRMED_FDS_AMOUNT,
       Tag.FIRST_UNCONFIRMED_FD_TIMESTAMP,
       Tag.FD_NUMBER,
       Tag.FN_SERIAL_NUMBER]);
-    mandatoryTags.update(FnRecordType.CURRENT_STATE_REPORT, set3);
+    // mandatoryTags.update(FnRecordType.CURRENT_STATE_REPORT, set3);
 
-    var set4 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
+    // var set4 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
+    //   Tag.DATE_TIME,
+    //   Tag.OPERATION_TYPE,
+    //   Tag.TICKET_TOTAL_SUM,
+    //   Tag.FD_NUMBER,
+    //   Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags[FnRecordType.TICKET] = LinkedHashSet<Tag>.from([
       Tag.DATE_TIME,
       Tag.OPERATION_TYPE,
       Tag.TICKET_TOTAL_SUM,
       Tag.FD_NUMBER,
       Tag.FN_SERIAL_NUMBER]);
-    mandatoryTags.update(FnRecordType.TICKET, set4);
+    // mandatoryTags.update(FnRecordType.TICKET, set4);
 
-    var set5 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
+    // var set5 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
+    //   Tag.DATE_TIME,
+    //   Tag.KKT_REGISTER_NUMBER,
+    //   Tag.FD_NUMBER,
+    //   Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags[FnRecordType.CLOSE_FN_REPORT] = LinkedHashSet<Tag>.from([
       Tag.DATE_TIME,
       Tag.KKT_REGISTER_NUMBER,
       Tag.FD_NUMBER,
       Tag.FN_SERIAL_NUMBER]);
-    mandatoryTags.update(FnRecordType.TICKET, set5);
+    // mandatoryTags.update(FnRecordType.CLOSE_FN_REPORT, set5);
 
-    var set6 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
+    // var set6 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
+    //   Tag.OFD_INN,
+    //   Tag.FN_SERIAL_NUMBER,
+    //   Tag.FD_NUMBER,
+    //   Tag.DATE_TIME]);
+    mandatoryTags[FnRecordType.OPERATOR_ACK] = LinkedHashSet<Tag>.from([
       Tag.OFD_INN,
       Tag.FN_SERIAL_NUMBER,
       Tag.FD_NUMBER,
       Tag.DATE_TIME]);
-    mandatoryTags.update(FnRecordType.TICKET, set6);
+    // mandatoryTags.update(FnRecordType.OPERATOR_ACK, set6);
 
     LinkedHashSet<Tag> ticketTags = mandatoryTags[FnRecordType.TICKET];
-    var set7 = (LinkedHashSet<Tag> set) => ticketTags;
+    // var set7 = (LinkedHashSet<Tag> set) => ticketTags;
 
-    mandatoryTags.update(FnRecordType.CORRECTION_TICKET, set7);
-    mandatoryTags.update(FnRecordType.ACC_FORM, set7);
-    mandatoryTags.update(FnRecordType.CORRECTION_ACC_FORM, set7);
+    mandatoryTags[FnRecordType.CORRECTION_TICKET] = ticketTags;
+    mandatoryTags[FnRecordType.ACC_FORM] = ticketTags;
+    mandatoryTags[FnRecordType.CORRECTION_ACC_FORM] = ticketTags;
 
     LinkedHashSet<Tag> registrationReportTags = mandatoryTags[FnRecordType.REGISTRATION_REPORT];
-    var set8 = (LinkedHashSet<Tag> set) => registrationReportTags;
+    // var set8 = (LinkedHashSet<Tag> set) => registrationReportTags;
 
-    mandatoryTags.update(FnRecordType.REGISTRATION_CHANGE_REPORT, set8);
+    mandatoryTags[FnRecordType.REGISTRATION_CHANGE_REPORT] = registrationReportTags;
 
     LinkedHashSet<Tag> openShiftReport = mandatoryTags[FnRecordType.OPEN_SHIFT_REPORT];
-    var set9 = (LinkedHashSet<Tag> set) => openShiftReport;
+    // var set9 = (LinkedHashSet<Tag> set) => openShiftReport;
 
-    mandatoryTags.update(FnRecordType.CLOSE_SHIFT_REPORT, set9);
+    mandatoryTags[FnRecordType.CLOSE_SHIFT_REPORT] = openShiftReport;
   }
 
   static bool isTagMandatory(Tag tag, FnRecordType docType) {
