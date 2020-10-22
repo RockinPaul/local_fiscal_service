@@ -173,7 +173,9 @@ class FnRecord {
     }
     print('4');
 
-    _type = FnRecordType.byCode(ConversionUtil.leToUInt16(buffer, offset: TYPE_OFFSET));
+    int code = ConversionUtil.leToUInt16(buffer, offset: TYPE_OFFSET);
+    print('CODE: $code');
+    _type = FnRecordType.byCode(code);
     print('5');
 
     _length = ConversionUtil.leToUInt16(buffer, offset: LENGTH_OFFSET);
