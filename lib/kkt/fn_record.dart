@@ -161,34 +161,79 @@ class FnRecord {
   FnRecord(Uint8List buffer, bool includeSignature) {
     // mandatoryTagsInit();
 
+    print('1');
+
     int tailLen = (includeSignature ? SIGNATURE_SIZE : 0);
+    print('2');
+
     if (buffer == null || buffer.length < HEADER_SIZE + tailLen) {
+      print('3');
+
       throw Exception("Incorrect buffer size");
     }
+    print('4');
+
     _type = FnRecordType.byCode(ConversionUtil.leToUInt16(buffer, offset: TYPE_OFFSET));
+    print('5');
+
     _length = ConversionUtil.leToUInt16(buffer, offset: LENGTH_OFFSET);
+    print('6');
+
     int offset = FIELDS_OFFSET;
+    print('7');
+
     if (buffer.length > HEADER_SIZE + tailLen) {
+      print('8');
+
       try {
+        print('9');
+
         Field field = Field.makeFromBuffer(buffer, offset: offset);
-          while (field != null) {
-            addField(field);
-            int fieldSize = field.size;
-            offset += fieldSize;
-            if (offset - HEADER_SIZE >= _length) {
-              break;
+        print('10');
+
+        while (field != null) {
+          print('11');
+
+          addField(field);
+          print('12');
+
+          int fieldSize = field.size;
+          print('13');
+
+          offset += fieldSize;
+          print('14');
+
+          if (offset - HEADER_SIZE >= _length) {
+            print('15');
+
+            break;
             }
+          print('16');
+
           field = Field.makeFromBuffer(buffer, offset: offset);
-          }
+          print('17');
+
+        }
       } catch (e) {
+        print('18');
         throw new Exception(e);
       }
     }
+    print('19');
+
     if (offset - HEADER_SIZE != _length) {
+      print('20');
+
       throw new Exception("Incorrect input data format");
     }
+    print('21');
+
     if (includeSignature) {
+      print('22');
+
       List.copyRange(_signature, 0, buffer, 0, SIGNATURE_SIZE);
+      print('23');
+
     }
   }
 
