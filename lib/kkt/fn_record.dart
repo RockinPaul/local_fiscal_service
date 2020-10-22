@@ -174,102 +174,94 @@ class FnRecord {
 
   List<Field> get fields => _fields;
 
- Field getFieldByTag(Tag tag) {
-  return STLVField.getFieldByTag(tag, _fields);
-}
-//
-// public List<Field> getFieldsByTag(Tag tag) {
-//   List<Field> result = new ArrayList<>();
-//   for(Field field : fields) {
-//     if(field.getTag() == tag) {
-//       result.add(field);
-//     }
-//   }
-//   return result;
-// }
-//
-// public byte[] getSignature() {
-//   return signature;
-// }
-//
-// public void setSignature(byte[] signature) {
-// setSignature(signature, 0);
-// }
-//
-// public void setSignature(byte[] data, int offset) {
-// System.arraycopy(data, offset, this.signature, 0, SIGNATURE_SIZE);
-// }
-//
-// public String getFnNumber() {
-//   return fnNumber;
-// }
-//
-// public Long getFdNumber() {
-//   return fdNumber;
-// }
-//
-// public byte[] getFiscalMark() {
-//   return fiscalMark;
-// }
-//
-// public synchronized FnRecord add(Field field) {
-//   addField(field);
-//   length += field.getSize();
-//   return this;
-// }
-//
-// public byte[] serialize() {
-//   return doSerialize(true, true);
-// }
-//
-// public byte[] serializeForSigning() {
-//   return doSerialize(false, true);
-// }
-//
-// public byte[] serializeForFiscalMark() {
-//   return extractMandatoryFields().doSerialize(false, false);
-// }
-//
-// private byte[] doSerialize(boolean includeSignature, boolean includeLength) {
-//   int size = length + HEADER_SIZE;
-//   if(!includeLength) {
-//     size -= LENGTH_SIZE;
-//   }
-//   if(includeSignature) {
-//     size += SIGNATURE_SIZE;
-//   }
-//   byte[] result = new byte[size];
-//   int offset = FIELDS_OFFSET;
-//   ConversionUtil.uint16ToLe(type.code, result, TYPE_OFFSET);
-//   if(includeLength) {
-//     ConversionUtil.uint16ToLe(length, result, LENGTH_OFFSET);
-//   } else {
-//     offset -= LENGTH_SIZE;
-//   }
-//   for(Field field : fields) {
-//     System.arraycopy(field.getBuffer(), 0, result, offset, field.getSize());
-//     offset += field.getSize();
-//   }
-//   if(includeSignature) {
-//     System.arraycopy(signature, 0, result, offset, SIGNATURE_SIZE);
-//   }
-//   return result;
-// }
-//
-// private List<byte[]> serializeFields(List<Field> fields) {
-//   List<byte[]> result = new ArrayList<>();
-//   for(Field field : fields) {
-//     if(field instanceof STLVField) {
-//       result.addAll(serializeFields(((STLVField)field).getFields()));
-//     } else {
-//       //TODO
-// //                byte[] fieldBuf = new byte[field.getSize()];
-// //                System.arraycopy(field.getBuffer(), 0, result, 0, field.getSize());
-//     }
-//   }
-//   return result;
-// }
-//
+  Field getFieldByTag(Tag tag) {
+    return STLVField.getFieldByTag(tag, _fields);
+  }
+
+  List<Field> getFieldsByTag(Tag tag) {
+   List<Field> result = List<Field>();
+    for(Field field in fields) {
+      if(field.tag == tag) {
+        result.add(field);
+      }
+    }
+    return result;
+  }
+
+  Uint8List getSignature() => _signature;
+
+  void setSignature(Uint8List data, {int offset = 0}) {
+    List.copyRange(_signature, 0, data, offset, SIGNATURE_SIZE);
+  }
+
+  String get fnNumber => _fnNumber;
+
+  int get fdNumber => _fdNumber;
+
+  Uint8List get fiscalMark => _fiscalMark;
+
+  FnRecord add(Field field) {
+    addField(field);
+    _length += field.size;
+    return this;
+  }
+
+  Uint8List serialize() {
+    return doSerialize(true, true);
+  }
+
+  Uint8List serializeForSigning() {
+    return doSerialize(false, true);
+  }
+
+  Uint8List serializeForFiscalMark() {
+    return extractMandatoryFields().doSerialize(false, false);
+  }
+
+  Uint8List doSerialize(bool includeSignature, bool includeLength) {
+    int size = length + HEADER_SIZE;
+    if(!includeLength) {
+      size -= LENGTH_SIZE;
+    }
+    if(includeSignature) {
+      size += SIGNATURE_SIZE;
+    }
+    Uint8List result = Uint8List(size);
+    int offset = FIELDS_OFFSET;
+    ConversionUtil.uint16ToLe(result, value: type.code, offset: TYPE_OFFSET);
+    if (includeLength) {
+      ConversionUtil.uint16ToLe(result, value: length, offset: LENGTH_OFFSET);
+    } else {
+      offset -= LENGTH_SIZE;
+    }
+    for (Field field in fields) {
+      List.copyRange(result, offset, field.buffer, 0, field.size);
+      offset += field.size;
+    }
+    if (includeSignature) {
+      List.copyRange(result, offset, _signature, 0, SIGNATURE_SIZE);
+    }
+    return result;
+  }
+
+  List<Uint8List> serializeFields({List<Field> fields}) {
+    if (fields == null) {
+      fields = _fields;
+    }
+    List<Uint8List> result = List<Uint8List>();
+    for(Field field in fields) {
+      if (field.runtimeType == STLVField) {
+        STLVField stlvField = field;
+        result.addAll(serializeFields(fields: stlvField.getFields()));
+      } else {
+        //TODO
+  //                byte[] fieldBuf = new byte[field.getSize()];
+  //                System.arraycopy(field.getBuffer(), 0, result, 0, field.getSize());
+      }
+    }
+    return result;
+  }
+
  void addField(Field field) {
     TLVField tlvField = field;
     if (field.tag == Tag.FN_SERIAL_NUMBER) {
@@ -280,46 +272,43 @@ class FnRecord {
       _fiscalMark = tlvField.getByteArray();
     }
     _fields.add(field);
-}
-//
-// public List<byte[]> serializeFields() {
-//   return serializeFields(fields);
-// }
-//
-// public FnRecord extractMandatoryFields () {
-//   FnRecord result = new FnRecord(type);
-//   for(Field field : getFields()) {
-//   if(isTagMandatory(type, field.getTag())) {
-//   result.add(field);
-//   }
-//   }
-//   Collections.sort(result.fields, Comparator.comparingInt(field -> field.getTag().getCode()));
-//   return result;
-// }
-//
-// public static List<Field> extractFields(byte[] buffer, final int offset, final int size) {
-// List<Field> result = new ArrayList<Field>();
-// int off = offset;
-// try {
-// Field field = Field.makeFromBuffer(buffer, off);
-// while(field != null) {
-// result.add(field);
-// int fieldSize = field.getSize();
-// off += fieldSize;
-// if(off >= offset+size) {
-// break;
-// }
-// field = Field.makeFromBuffer(buffer, off);
-// }
-// } catch (UnknownTagException e) {
-// throw new IllegalArgumentException(e);
-// }
-// if(off != offset+size) {
-// throw new IllegalArgumentException("Incorrect input data");
-// }
-// return result;
-// }
-//
+  }
+
+
+  FnRecord extractMandatoryFields () {
+    FnRecord result = new FnRecord.withType(type);
+    for(Field field in fields) {
+      if (isTagMandatory(field.tag, _type)) {
+        result.add(field);
+      }
+    }
+    result.fields.sort((a, b) => a.tag.code.compareTo(b.tag.code));
+    return result;
+  }
+
+  static List<Field> extractFields(Uint8List buffer, final int offset, final int size) {
+    List<Field> result = List<Field>();
+    int off = offset;
+    try {
+      Field field = Field.makeFromBuffer(buffer, offset: off);
+      while(field != null) {
+        result.add(field);
+        int fieldSize = field.size;
+        off += fieldSize;
+        if (off >= offset+size) {
+          break;
+        }
+        field = Field.makeFromBuffer(buffer, offset: off);
+      }
+    } catch (e) {
+    throw Exception(e);
+    }
+    if (off != offset + size) {
+      throw Exception("Incorrect input data");
+    }
+    return result;
+  }
+
 // @Override
 // public boolean equals(Object o) {
 //   if(this == o)
@@ -332,7 +321,7 @@ class FnRecord {
 //   return Objects.equals(type, fnRecord.type) && length == fnRecord.length &&
 //       Objects.equals(fields, fnRecord.fields) && Arrays.equals(signature, fnRecord.signature);
 // }
-//
+
 // @Override
 // public int hashCode() {
 //   return Objects.hash(type, length, fields, signature);
@@ -353,8 +342,7 @@ class FnRecord {
 //   return sb.toString();
 // }
 //
-// @Override
-// public FnRecord clone() {
-//   return FnRecord.construct(serialize());
-// }
+  FnRecord clone() {
+    return FnRecord.construct(serialize());
+  }
 }
