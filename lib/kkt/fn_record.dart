@@ -38,7 +38,7 @@ class FnRecord {
   static Map<FnRecordType, LinkedHashSet<Tag>> mandatoryTags = Map<FnRecordType, LinkedHashSet<Tag>>();
 
   mandatoryTagsInit() {
-    var set1 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([Tag.USER_INN,
+    var set1 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([Tag.USER_INN,
       Tag.DATE_TIME,
       Tag.KKT_REGISTER_NUMBER,
       Tag.OFD_INN,
@@ -46,13 +46,13 @@ class FnRecord {
       Tag.FN_SERIAL_NUMBER]);
     mandatoryTags.update(FnRecordType.REGISTRATION_REPORT, set1);
 
-    var set2 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([Tag.DATE_TIME,
+    var set2 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([Tag.DATE_TIME,
       Tag.SHIFT_NUMBER,
       Tag.FD_NUMBER,
       Tag.FN_SERIAL_NUMBER]);
     mandatoryTags.update(FnRecordType.OPEN_SHIFT_REPORT, set2);
 
-    var set3 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([
+    var set3 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
       Tag.DATE_TIME,
       Tag.UNCONFIRMED_FDS_AMOUNT,
       Tag.FIRST_UNCONFIRMED_FD_TIMESTAMP,
@@ -60,7 +60,7 @@ class FnRecord {
       Tag.FN_SERIAL_NUMBER]);
     mandatoryTags.update(FnRecordType.CURRENT_STATE_REPORT, set3);
 
-    var set4 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([
+    var set4 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
       Tag.DATE_TIME,
       Tag.OPERATION_TYPE,
       Tag.TICKET_TOTAL_SUM,
@@ -68,14 +68,14 @@ class FnRecord {
       Tag.FN_SERIAL_NUMBER]);
     mandatoryTags.update(FnRecordType.TICKET, set4);
 
-    var set5 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([
+    var set5 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
       Tag.DATE_TIME,
       Tag.KKT_REGISTER_NUMBER,
       Tag.FD_NUMBER,
       Tag.FN_SERIAL_NUMBER]);
     mandatoryTags.update(FnRecordType.TICKET, set5);
 
-    var set6 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([
+    var set6 = (LinkedHashSet<Tag> set) => LinkedHashSet<Tag>.from([
       Tag.OFD_INN,
       Tag.FN_SERIAL_NUMBER,
       Tag.FD_NUMBER,
