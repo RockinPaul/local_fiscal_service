@@ -159,7 +159,7 @@ class FnRecord {
   }
 
   FnRecord(Uint8List buffer, bool includeSignature) {
-    mandatoryTagsInit();
+    // mandatoryTagsInit();
 
     int tailLen = (includeSignature ? SIGNATURE_SIZE : 0);
     if (buffer == null || buffer.length < HEADER_SIZE + tailLen) {
