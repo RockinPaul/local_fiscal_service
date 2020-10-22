@@ -65,31 +65,37 @@ class FnRecord {
       Tag.FN_SERIAL_NUMBER]);
     mandatoryTags.update(FnRecordType.TICKET, set4);
 
-    mandatoryTags.putIfAbsent(FnRecordType.CLOSE_FN_REPORT, Set<Tag>.from([
+    var set5 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([
       Tag.DATE_TIME,
       Tag.KKT_REGISTER_NUMBER,
       Tag.FD_NUMBER,
-      Tag.FN_SERIAL_NUMBER]));
-    mandatoryTags.putIfAbsent(FnRecordType.OPERATOR_ACK, Set<Tag>.from([
+      Tag.FN_SERIAL_NUMBER]);
+    mandatoryTags.update(FnRecordType.TICKET, set5);
+
+    var set6 = (LinkedHashSet<Tag> set) => LinkedHashSet.from([
       Tag.OFD_INN,
       Tag.FN_SERIAL_NUMBER,
       Tag.FD_NUMBER,
-      Tag.DATE_TIME]));
+      Tag.DATE_TIME]);
+    mandatoryTags.update(FnRecordType.TICKET, set6);
 
-    mandatoryTags.putIfAbsent(FnRecordType.CORRECTION_TICKET, mandatoryTags[FnRecordType.TICKET]);
-    mandatoryTags.putIfAbsent(FnRecordType.ACC_FORM, mandatoryTags[FnRecordType.TICKET]);
-    mandatoryTags.putIfAbsent(FnRecordType.CORRECTION_ACC_FORM, mandatoryTags[FnRecordType.TICKET]);
-    mandatoryTags.putIfAbsent(FnRecordType.REGISTRATION_CHANGE_REPORT, mandatoryTags[FnRecordType.REGISTRATION_REPORT]);
-    mandatoryTags.putIfAbsent(FnRecordType.CLOSE_SHIFT_REPORT, mandatoryTags[FnRecordType.OPEN_SHIFT_REPORT]);
+    var set7 = (LinkedHashSet<Tag> set) => mandatoryTags[FnRecordType.TICKET];
+    mandatoryTags.update(FnRecordType.CORRECTION_TICKET, set7);
+    mandatoryTags.update(FnRecordType.ACC_FORM, set7);
+    mandatoryTags.update(FnRecordType.CORRECTION_ACC_FORM, set7);
+    var set8 = (LinkedHashSet<Tag> set) => mandatoryTags[FnRecordType.REGISTRATION_REPORT];
+    mandatoryTags.update(FnRecordType.REGISTRATION_CHANGE_REPORT, set8);
+    var set9 = (LinkedHashSet<Tag> set) => mandatoryTags[FnRecordType.OPEN_SHIFT_REPORT];
+    mandatoryTags.update(FnRecordType.CLOSE_SHIFT_REPORT, set9);
   }
 
-  static bool isTagMandatory(FnRecordType docType, Tag tag) {
+  static bool isTagMandatory(Tag tag, FnRecordType docType) {
     return mandatoryTags[docType].contains(tag);
   }
 
-  bool isTagMandatory(Tag tag) {
-    return isTagMandatory(_type, tag);
-  }
+  // bool isTagMandatory(Tag tag) {
+  //   return isTagMandatory(_type, tag);
+  // }
 
   bool isAllRequiredTagsSet(){
     Iterable<Tag> tags = mandatoryTags[_type].where((element) => getFieldByTag(tag) != null);
