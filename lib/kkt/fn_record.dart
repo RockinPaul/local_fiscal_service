@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:typed_data';
 
 import 'package:local_fiscal_service/kkt/field.dart';
+import 'package:local_fiscal_service/kkt/stlv_field.dart';
 import 'package:local_fiscal_service/kkt/field_type.dart';
 import 'package:local_fiscal_service/kkt/fn_record_type.dart';
 import 'package:local_fiscal_service/kkt/tag.dart';
@@ -98,7 +99,7 @@ class FnRecord {
   // }
 
   bool isAllRequiredTagsSet(){
-    Iterable<Tag> tags = mandatoryTags[_type].where((element) => getFieldByTag(tag) != null);
+    Iterable<Tag> tags = mandatoryTags[_type].where((tag) => getFieldByTag(tag) != null);
     return mandatoryTags[_type].length == tags.length;
   }
 
@@ -107,10 +108,12 @@ class FnRecord {
   }
 
   FnRecord.withType(FnRecordType type) {
+    mandatoryTagsInit();
     this._type = type;
   }
 //
   FnRecord.withBuffer(Uint8List buffer) {
+    mandatoryTagsInit();
     this(buffer, true);
   }
 
@@ -204,10 +207,9 @@ class FnRecord {
 // public List<Field> getFields() {
 //   return fields;
 // }
-//
-// public <T extends Field> T getFieldByTag(Tag tag) {
-//   return STLVField.getFieldByTag(tag, fields);
-// }
+ Field getFieldByTag(Tag tag) {
+  return STLVField.getFieldByTag(tag, _fields);
+}
 //
 // public List<Field> getFieldsByTag(Tag tag) {
 //   List<Field> result = new ArrayList<>();

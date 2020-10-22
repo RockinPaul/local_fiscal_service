@@ -98,14 +98,14 @@ class STLVField extends Field {
 //     return getFieldByTag(tag, getFields());
 //   }
 //
-//   public static <T extends Field> T getFieldByTag(Tag tag, List<Field> fields) {
-//     for(Field field : fields) {
-//       if(field.getTag() == tag) {
-//         return (T)field;
-//       }
-//     }
-//     return null;
-//   }
+  static Field getFieldByTag(Tag tag, List<Field> fields) {
+    for (Field field in fields) {
+      if (field.tag == tag) {
+        return field;
+      }
+    }
+    return null;
+  }
 //
 //   @Override
 //   public boolean equals(Object o) {
