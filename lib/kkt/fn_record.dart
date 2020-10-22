@@ -161,6 +161,8 @@ class FnRecord {
   FnRecord(Uint8List buffer, bool includeSignature) {
     // mandatoryTagsInit();
 
+    print('Buffer: $buffer');
+
     print('1');
 
     int tailLen = (includeSignature ? SIGNATURE_SIZE : 0);
