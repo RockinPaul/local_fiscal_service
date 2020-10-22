@@ -82,13 +82,21 @@ class FnRecord {
       Tag.DATE_TIME]);
     mandatoryTags.update(FnRecordType.TICKET, set6);
 
-    var set7 = (LinkedHashSet<Tag> set) => mandatoryTags[FnRecordType.TICKET];
+    LinkedHashSet<Tag> ticketTags = mandatoryTags[FnRecordType.TICKET];
+    var set7 = (LinkedHashSet<Tag> set) => ticketTags;
+
     mandatoryTags.update(FnRecordType.CORRECTION_TICKET, set7);
     mandatoryTags.update(FnRecordType.ACC_FORM, set7);
     mandatoryTags.update(FnRecordType.CORRECTION_ACC_FORM, set7);
-    var set8 = (LinkedHashSet<Tag> set) => mandatoryTags[FnRecordType.REGISTRATION_REPORT];
+
+    LinkedHashSet<Tag> registrationReportTags = mandatoryTags[FnRecordType.REGISTRATION_REPORT];
+    var set8 = (LinkedHashSet<Tag> set) => registrationReportTags;
+
     mandatoryTags.update(FnRecordType.REGISTRATION_CHANGE_REPORT, set8);
-    var set9 = (LinkedHashSet<Tag> set) => mandatoryTags[FnRecordType.OPEN_SHIFT_REPORT];
+
+    LinkedHashSet<Tag> openShiftReport = mandatoryTags[FnRecordType.OPEN_SHIFT_REPORT];
+    var set9 = (LinkedHashSet<Tag> set) => openShiftReport;
+
     mandatoryTags.update(FnRecordType.CLOSE_SHIFT_REPORT, set9);
   }
 
