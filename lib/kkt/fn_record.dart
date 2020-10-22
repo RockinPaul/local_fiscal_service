@@ -127,7 +127,7 @@ class FnRecord {
   }
 
   FnRecord(Uint8List buffer, bool includeSignature) {
-    mandatoryTagsInit();
+    // mandatoryTagsInit();
 
     int tailLen = (includeSignature ? SIGNATURE_SIZE : 0);
     if (buffer == null || buffer.length < HEADER_SIZE + tailLen) {
@@ -143,7 +143,7 @@ class FnRecord {
             addField(field);
             int fieldSize = field.size;
             offset += fieldSize;
-            if(offset - HEADER_SIZE >= _length) {
+            if (offset - HEADER_SIZE >= _length) {
               break;
             }
           field = Field.makeFromBuffer(buffer, offset: offset);
