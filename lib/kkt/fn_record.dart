@@ -291,11 +291,11 @@ class FnRecord {
     int off = offset;
     try {
       Field field = Field.makeFromBuffer(buffer, offset: off);
-      while(field != null) {
+      while (field != null) {
         result.add(field);
         int fieldSize = field.size;
         off += fieldSize;
-        if (off >= offset+size) {
+        if (off >= offset + size) {
           break;
         }
         field = Field.makeFromBuffer(buffer, offset: off);
