@@ -12,15 +12,17 @@ class ConversionUtil {
     return short;
   }
 
-  static Uint8List uint16ToLe(Uint8List bytes, {int value, int offset = 0}) {
-    if (value != null) {
+  static Uint8List uint16ToLe(int value, {Uint8List bytes, int offset = 0}) {
+    if (bytes != null && bytes.isNotEmpty) {
       bytes[offset] = value & 0xFF;
       bytes[offset + 1] = (value >> 8) & 0xFF;
+      return bytes;
     } else {
-      bytes[offset] = 0xFF;
-      bytes[offset + 1] = 0xFF;
+      Uint8List result = Uint8List(2);
+      result[0] = 0xFF;
+      result[1] = 0xFF;
+      return result;
     }
-    return bytes;
   }
 
   static int leToUInt32(Uint8List bytes, {int offset = 0}) {
