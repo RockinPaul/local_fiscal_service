@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:convert/convert.dart';
 
 extension Conversion on Uint8List {
   int toInt() {
@@ -20,5 +21,9 @@ extension Conversion on Uint8List {
       this[j] = tmp;
     }
     return this;
+  }
+
+  String toHexString() {
+    return hex.encode(this);
   }
 }
