@@ -256,8 +256,8 @@ class FnRecord {
 
   Uint8List getHeaderBuffer() {
     Uint8List result = Uint8List(HEADER_SIZE);
-    ConversionUtil.uint16ToLe(result, value: type.code, offset: TYPE_OFFSET);
-    ConversionUtil.uint16ToLe(result, value: _length , offset: LENGTH_OFFSET);
+    ConversionUtil.uint16ToLe(type.code, bytes: result, offset: TYPE_OFFSET);
+    ConversionUtil.uint16ToLe(_length, bytes:result, offset: LENGTH_OFFSET);
     return result;
   }
 
@@ -317,9 +317,9 @@ class FnRecord {
     }
     Uint8List result = Uint8List(size);
     int offset = FIELDS_OFFSET;
-    ConversionUtil.uint16ToLe(result, value: type.code, offset: TYPE_OFFSET);
+    ConversionUtil.uint16ToLe(type.code, bytes:result, offset: TYPE_OFFSET);
     if (includeLength) {
-      ConversionUtil.uint16ToLe(result, value: length, offset: LENGTH_OFFSET);
+      ConversionUtil.uint16ToLe(length, bytes: result, offset: LENGTH_OFFSET);
     } else {
       offset -= LENGTH_SIZE;
     }
