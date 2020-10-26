@@ -19,8 +19,8 @@ class ConversionUtil {
       return bytes;
     } else {
       Uint8List result = Uint8List(2);
-      result[0] = 0xFF;
-      result[1] = 0xFF;
+      result[0] = value & 0xFF;
+      result[1] = (value >> 8) & 0xFF;
       return result;
     }
   }
