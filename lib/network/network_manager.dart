@@ -4,6 +4,7 @@ import 'package:local_fiscal_service/kkt/fn_record.dart';
 import 'package:local_fiscal_service/utils/CRC16CCITT.dart';
 import 'package:local_fiscal_service/network/data_container.dart';
 import 'package:local_fiscal_service/network/message_header.dart';
+import 'package:local_fiscal_service/network/message.dart';
 
 class NetworkManager {
   Socket _socket;
@@ -64,35 +65,35 @@ class NetworkManager {
   }
   header.setCrc(crc.value);
 
-  Message response = send(new Message(header, container));
+  Message response = send(Message(header, container));
   return FnRecord.construct(response.getContainer().getBody());
 }
 
-  private Message send(Message outMsg) throws IOException {
+Message send(Message outMsg) {
   Message result;
   try {
-  connect();
-  result = doSend(outMsg);
+    connect();
+    result = doSend(outMsg);
   } catch (IOException e) {
-  reconnect();
-  result = doSend(outMsg);
+    reconnect();
+    result = doSend(outMsg);
   }
-  return result;
-  }
-
-  private void reconnect() throws IOException {
-  socket = SocketFactory.getDefault().createSocket(remoteIp, remotePort);
-  socket.setSoTimeout(soTimeout);
+    return result;
   }
 
-  private Message doSend(Message outMsg) throws IOException {
+  reconnect() {
+    socket = SocketFactory.getDefault().createSocket(remoteIp, remotePort);
+    socket.setSoTimeout(soTimeout);
+  }
+
+  Message doSend(Message outMsg) {
   OutputStream output = socket.getOutputStream();
   byte[] outputBuffer = outMsg.serialize();
   output.write(outputBuffer);
 
   InputStream input = socket.getInputStream();
-  byte[] headerBuf = new byte[MessageHeader.getSize()];
-  if(input.read(headerBuf) == -1)
+  Uint8List headerBuf = new byte[MessageHeader.size];
+  if (input.read(headerBuf) == -1)
   throw new java.net.SocketException("Unable to read message header from socket");
   MessageHeader header = new MessageHeader(headerBuf);
   byte[] containerBuf = new byte[header.getBodySize()];
