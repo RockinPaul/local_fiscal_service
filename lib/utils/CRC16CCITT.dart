@@ -5,11 +5,11 @@ class CRC16CCITT {
   static int POLYNOMIAL = 0x1021;
   static int crc = 0xFFFF;
 
-  static void reset() {
+  reset() {
     crc = 0xFFFF;
   }
 
-  static void update(int b) {
+  update(int b) {
     for (int i = 0; i < 8; i++) {
       bool bit = ((b >> (7 - i) & 1) == 1);
       bool c15 = ((crc >> 15 & 1) == 1);
@@ -18,15 +18,12 @@ class CRC16CCITT {
     }
   }
 
-  static int getValue() {
-    return crc & 0xFFFF;
-  }
+  int get value => crc & 0xFFFF;
 
-  static int calc(Uint8List bytes) {
+  int calc(Uint8List bytes) {
     for (var b in bytes) {
-      CRC16CCITT.update(b);
+      update(b);
     }
-    return CRC16CCITT.getValue();
+    return value;
   }
-
 }

@@ -116,7 +116,7 @@ class DataContainer {
       throw Exception('Insufficient buffer size.');
     }
     ConversionUtil.uint16ToLe(body.length, bytes: data, offset: offset + BODY_LENGTH_OFFSET,);
-    ConversionUtil.uint16ToLe(crc, bytes: data, offset: offset+CRC_OFFSET,);
+    ConversionUtil.uint16ToLe(_crc, bytes: data, offset: offset + CRC_OFFSET,);
     data[offset + CONTAINER_TYPE_OFFSET] = containerType.code;
     data[offset + DOCUMENT_TYPE_OFFSET] = documentType.code;
     data[offset + CONTAINER_VERSION_OFFSET] = VERSION;
@@ -134,6 +134,6 @@ class DataContainer {
       }
       crc.update(data[i]);
     }
-    this.crc = crc.getValue();
+    _crc = crc.value;
   }
 }
