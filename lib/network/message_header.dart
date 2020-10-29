@@ -66,4 +66,26 @@ class MessageHeader {
       _crc = ConversionUtil.leToUInt16(crcBytes);
     }
   }
+
+  Uint8List serialize({Uint8List result, int offset = 0}) {
+    if (result == null || result.isEmpty) {
+      result = Uint8List(MESSAGE_HEADER_SIZE);
+    }
+    int pos = offset;
+    List.copyRange(result, 0, headerSignature, pos, headerSignature.length);
+    pos += headerSignature.length;
+    List.copyRange(result, 0, appCode, pos, appCode.length);
+    pos += protocolVersion.length;
+    List.copyRange(result, 0, protocolVersion, pos, protocolVersion.length);
+    pos += protocolVersion.length;
+    List.copyRange(result, 0, fnNumber.getBytes(), pos, fnNumber.length);
+    pos += fnNumber.length;
+    List.copyRange(result, 0, ConversionUtil.uint16ToLe(bodySize), pos 2);
+    pos += 2;
+    List.copyRange(result, 0, flags.serialize(), pos, 2);
+    pos += 2;
+    List.copyRange(result, 0, ConversionUtil.uint16ToLe(crc), pos, 2);
+
+    return result;
+  }
 }
