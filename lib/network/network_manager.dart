@@ -36,69 +36,73 @@ class NetworkManager {
       if (_socket != null && !_socketIsClosed) {
         _socket.close();
       }
-    } catch(e) {
+    } catch (e) {
       print('Network manager exception: $e');
     }
     _socket = null;
   }
 
-  FnRecord send(FnRecord outRecord) {
-  DataContainer container = new DataContainer();
-  container.setDocumentType(outRecord.type);
-  container.setBody(outRecord.serialize());
-  container.finish();
+  FnRecord sendRecord(FnRecord outRecord) {
+    DataContainer container = new DataContainer();
+    container.setDocumentType(outRecord.type);
+    container.setBody(outRecord.serialize());
+    container.finish();
 
-  MessageHeader header = new MessageHeader();
-  header.setFnNumber(outRecord.fnNumber);
-  header.setBodySize(container.size);
-  Uint8List headerData = header.serialize();
-  Uint8List bodyData = container.serialize();
-  CRC16CCITT crc = new CRC16CCITT();
-  for (int i = 0; i < headerData.length; i++){
-    if( i == MessageHeader.size - 2 || i == MessageHeader.size - 1) {
-      continue; //skip crc field
+    MessageHeader header = new MessageHeader();
+    header.setFnNumber(outRecord.fnNumber);
+    header.setBodySize(container.size);
+    Uint8List headerData = header.serialize();
+    Uint8List bodyData = container.serialize();
+    CRC16CCITT crc = new CRC16CCITT();
+    for (int i = 0; i < headerData.length; i++) {
+      if (i == MessageHeader.size - 2 || i == MessageHeader.size - 1) {
+        continue; //skip crc field
+      }
+      crc.update(headerData[i]);
     }
-    crc.update(headerData[i]);
-  }
-  for(int i=0; i<bodyData.length; i++){
-    crc.update(bodyData[i]);
-  }
-  header.setCrc(crc.value);
+    for (int i = 0; i < bodyData.length; i++) {
+      crc.update(bodyData[i]);
+    }
+    header.setCrc(crc.value);
 
-  Message response = send(Message(header, container));
-  return FnRecord.construct(response.getContainer().getBody());
-}
-
-Message send(Message outMsg) {
-  Message result;
-  try {
-    connect();
-    result = doSend(outMsg);
-  } catch (IOException e) {
-    reconnect();
-    result = doSend(outMsg);
+    Message response = sendMessage(Message(
+      header: header,
+      container: container,
+    ));
+    return FnRecord.construct(response.container.body);
   }
+
+  Message sendMessage(Message outMsg) {
+    Message result;
+    try {
+      connect();
+      result = doSend(outMsg);
+    } catch (e) {
+      reconnect();
+      result = doSend(outMsg);
+    }
     return result;
   }
 
   reconnect() {
-    socket = SocketFactory.getDefault().createSocket(remoteIp, remotePort);
-    socket.setSoTimeout(soTimeout);
+    // socket = SocketFactory.getDefault().createSocket(remoteIp, remotePort);
+    // socket.setSoTimeout(soTimeout);
   }
 
   Message doSend(Message outMsg) {
-  OutputStream output = socket.getOutputStream();
-  byte[] outputBuffer = outMsg.serialize();
-  output.write(outputBuffer);
+    // OutputStream output = socket.getOutputStream();
+    Uint8List outputBuffer = outMsg.serialize();
+    // output.write(outputBuffer);
 
-  InputStream input = socket.getInputStream();
-  Uint8List headerBuf = new byte[MessageHeader.size];
-  if (input.read(headerBuf) == -1)
-  throw new java.net.SocketException("Unable to read message header from socket");
-  MessageHeader header = new MessageHeader(headerBuf);
-  byte[] containerBuf = new byte[header.getBodySize()];
-  if(input.read(containerBuf) == -1)
-  throw new java.net.SocketException("Unable to read message body from socket");
-  return new Message(header, new DataContainer(containerBuf));
+    // InputStream input = socket.getInputStream();
+    Uint8List headerBuf = Uint8List(MessageHeader.size);
+    // if (input.read(headerBuf) == -1)
+    // throw Exception('Unable to read message header from socket);
+    MessageHeader header = new MessageHeader(data: headerBuf);
+    Uint8List containerBuf = Uint8List(header.bodySize);
+    // if (input.read(containerBuf) == -1)
+    //   throw Exception('Unable to read message body from socket');
+    return Message(
+        header: header, container: DataContainer(data: containerBuf));
   }
 }
