@@ -17,16 +17,24 @@ class NetworkManager {
     _soTimeout = timeout;
   }
 
-  connect(String ip, int port) {
-    _remoteIp = ip;
-    _remotePort = port;
-    reconnect();
-  }
-
-  connect() {
-    if(_socket == null || _socketIsClosed) {
-      reconnect();
+  connect({String ip, int port}) {
+    if (ip != null && port != null) {
+      _remoteIp = ip;
+      _remotePort = port;
+    }
+    if (_socket != null || _socketIsClosed) {
+      // reconnect();
     }
   }
 
+  disconnect() {
+    try {
+      if (_socket != null && !_socketIsClosed) {
+        _socket.close();
+      }
+    } catch(e) {
+      print('Network manager exception: $e');
+    }
+    _socket = null;
+  }
 }
