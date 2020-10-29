@@ -25,4 +25,20 @@ class DataContainer {
   int containerVersion;
   ServiceData serviceData;
   Uint8List body;
+
+  DataContainer({ContainerType type, Uint8List data, int offset = 0}) {
+    if (type != null) {
+      containerType = type;
+      containerVersion = VERSION;
+      serviceData = ServiceData();
+    } else {
+      if (data.length - offset < getHeaderSize()) {
+        throw Exception('Data buffer if too small');
+      }
+      int bodySize = ConversionUtil.leToUInt16(
+        data,
+        offset: offset + BODY_LENGTH_OFFSET,
+      );
+    }
+  }
 }
