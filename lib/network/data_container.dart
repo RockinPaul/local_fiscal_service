@@ -107,4 +107,33 @@ class DataContainer {
   static int get headerSize => SERVICE_DATA_OFFSET + ServiceData.getSize();
 
   int get size => headerSize + bodySize;
+
+  Uint8List serialize({Uint8List data, int offset = 0}) {
+    if (data == null || data.isEmpty) {
+      data = Uint8List(size);
+    }
+    if (data.length - offset < size) {
+      throw Exception('Insufficient buffer size.');
+    }
+    ConversionUtil.uint16ToLe(body.length, bytes: data, offset: offset + BODY_LENGTH_OFFSET,);
+    ConversionUtil.uint16ToLe(crc, bytes: data, offset: offset+CRC_OFFSET,);
+    data[offset + CONTAINER_TYPE_OFFSET] = containerType.code;
+    data[offset + DOCUMENT_TYPE_OFFSET] = documentType.code;
+    data[offset + CONTAINER_VERSION_OFFSET] = VERSION;
+    serviceData.serialize(data, offset + SERVICE_DATA_OFFSET);
+    List.copyRange(data, offset + headerSize, body, 0, body.length);
+    return data;
+  }
+
+  void finish() {
+    Uint8List data = serialize();
+    CRC16CCITT crc = new CRC16CCITT();
+    for(int i = 0; i < data.length; i++) {
+      if (i == CRC_OFFSET || i == CRC_OFFSET + 1) {
+        continue; //skip crc field
+      }
+      crc.update(data[i]);
+    }
+    this.crc = crc.getValue();
+  }
 }
