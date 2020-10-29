@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:local_fiscal_service/utils/conversion_util.dart';
+import 'package:local_fiscal_service/utils/string_extension.dart';
 import 'package:local_fiscal_service/network/message_header_flags.dart';
 
 class MessageHeader {
@@ -78,9 +79,9 @@ class MessageHeader {
     pos += protocolVersion.length;
     List.copyRange(result, 0, protocolVersion, pos, protocolVersion.length);
     pos += protocolVersion.length;
-    List.copyRange(result, 0, fnNumber.getBytes(), pos, fnNumber.length);
+    List.copyRange(result, 0, fnNumber.toBytes(), pos, fnNumber.length);
     pos += fnNumber.length;
-    List.copyRange(result, 0, ConversionUtil.uint16ToLe(bodySize), pos 2);
+    List.copyRange(result, 0, ConversionUtil.uint16ToLe(bodySize), pos, 2);
     pos += 2;
     List.copyRange(result, 0, flags.serialize(), pos, 2);
     pos += 2;
@@ -88,4 +89,52 @@ class MessageHeader {
 
     return result;
   }
+
+  Uint8List get headerSignature => _headerSignature;
+
+  Uint8List get appCode => _appCode;
+
+  Uint8List get protocolVersion => _protocolVersion;
+
+  String get fnNumber => _fnNumber;
+
+  int get bodySize => _bodySize;
+
+  MessageHeaderFlags get flags => _flags;
+
+  int get crc => _crc;
+
+  setFnNumber(String fnNumber) {
+    if (_fnNumber.length > FN_NUMBER_SIZE) {
+      throw Exception('Fiscal driver number size must be 16');
+    } else if (_fnNumber.length < FN_NUMBER_SIZE) {
+      _fnNumber = fnNumber + String.fromCharCode(16 - fnNumber.length).replaceAll('\0', ' ');
+    }
+    else {
+      _fnNumber = fnNumber;
+    }
+  }
+
+  setBodySize(int bodySize) {
+    _bodySize = bodySize;
+  }
+
+  setFlags(MessageHeaderFlags flags) {
+    if (flags.clientFeature == ClientFeature.UNDEFINED_FEATURE) {
+      throw Exception('Invalid client feature flags');
+    }
+    if (flags.crcMode == CRCMode.UNDEFINED_MODE ||
+        flags.crcMode == CRCMode.NO_CRC && crc != 0) {
+      throw Exception('Invalid CRC mode');
+    }
+    _flags = flags;
+  }
+
+  setCrc(int crc) {
+    _crc = crc;
+  }
+
+  static int get size => MESSAGE_HEADER_SIZE;
+
+  int get messageSize => MESSAGE_HEADER_SIZE + bodySize;
 }
