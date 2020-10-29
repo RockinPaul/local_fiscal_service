@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:local_fiscal_service/utils/conversion_util.dart';
+import 'package:local_fiscal_service/network/message_header_flags.dart';
 
 class MessageHeader {
   static const int HEADER_SIGNATURE_OFFSET = 0;
@@ -28,4 +29,41 @@ class MessageHeader {
   int _bodySize;
   MessageHeaderFlags _flags;
   int _crc;
+
+  MessageHeader(Uint8List data) {
+    if (data == null) {
+      List.copyRange(_headerSignature, 0, HEADER_SIGNATURE, 0, HEADER_SIGNATURE.length);
+      List.copyRange(_appCode, 0, APPLICATION_CODE, 0, APPLICATION_CODE.length);
+      List.copyRange(_protocolVersion, 0, PROTOCOL_VERSION, PROTOCOL_VERSION.length);
+      _flags = MessageHeaderFlags();
+    } else {
+      if (data.length < MESSAGE_HEADER_SIZE) {
+        throw Exception('Data buffer if too small');
+      }
+      List.copyRange(_headerSignature, 0, data, HEADER_SIGNATURE_OFFSET, APPCODE_OFFSET);
+      if(HEADER_SIGNATURE != _headerSignature) {
+        throw Exception('Invalid header signature');
+      }
+      List.copyRange(_appCode, 0, data, APPCODE_OFFSET, PROTOCOL_VERSION_OFFSET);
+      if (APPLICATION_CODE != _appCode) {
+        throw Exception('Invalid application code');
+      }
+      List.copyRange(_protocolVersion, 0, data, PROTOCOL_VERSION_OFFSET, FN_NUMBER_OFFSET);
+      if(PROTOCOL_VERSION != _protocolVersion) {
+        throw Exception('Invalid protocol version');
+      }
+      Uint8List fnNumberBytes = Uint8List(0);
+      List.copyRange(fnNumberBytes, 0, data, FN_NUMBER_OFFSET, BODY_SIZE_OFFSET);
+      _fnNumber = fnNumberBytes.toString();
+      Uint8List bodySizeBytes = Uint8List(0);
+      List.copyRange(bodySizeBytes, 0, data, BODY_SIZE_OFFSET, FLAGS_OFFSET);
+      _bodySize = ConversionUtil.leToUInt16(bodySizeBytes);
+      Uint8List flagsBytes = Uint8List(0);
+      List.copyRange(flagsBytes, 0, data, FLAGS_OFFSET, CRC_OFFSET);
+      setFlags(MessageHeaderFlags(data: flagsBytes));
+      Uint8List crcBytes = Uint8List(0);
+      List.copyRange(crcBytes, 0, data, CRC_OFFSET, MESSAGE_HEADER_SIZE);
+      _crc = ConversionUtil.leToUInt16(crcBytes);
+    }
+  }
 }
