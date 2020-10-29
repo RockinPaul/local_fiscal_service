@@ -59,8 +59,8 @@ class DataContainer {
           _body,
           0,
           data,
-          offset + SERVICE_DATA_OFFSET + serviceData.size,
-          offset + SERVICE_DATA_OFFSET + serviceData.size + bodySize);
+          offset + SERVICE_DATA_OFFSET + _serviceData.size,
+          offset + SERVICE_DATA_OFFSET + _serviceData.size + bodySize);
     }
   }
 

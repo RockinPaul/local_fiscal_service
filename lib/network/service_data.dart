@@ -18,10 +18,11 @@ class ServiceData {
     _dataEncrypted = dataEncrypted;
   }
 
+  int get size => _SERVICE_DATA_SIZE;
   static int getSize() => _SERVICE_DATA_SIZE;
 
   serialize(Uint8List data, int offset) {
-    if (data.length-offset < _SERVICE_DATA_SIZE) {
+    if (data.length - offset < _SERVICE_DATA_SIZE) {
       throw Exception('Invalid buffer length for service data.');
     }
     if (_dataEncrypted) {
