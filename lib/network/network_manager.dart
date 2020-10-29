@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:local_fiscal_service/kkt/fn_record.dart';
 import 'package:local_fiscal_service/utils/CRC16CCITT.dart';
 import 'package:local_fiscal_service/network/data_container.dart';
+import 'package:local_fiscal_service/network/message_header.dart';
 
 class NetworkManager {
   Socket _socket;
@@ -46,21 +48,21 @@ class NetworkManager {
   container.finish();
 
   MessageHeader header = new MessageHeader();
-  header.setFnNumber(outRecord.getFnNumber());
-  header.setBodySize(container.getSize());
-  byte[] headerData = header.serialize();
-  byte[] bodyData = container.serialize();
+  header.setFnNumber(outRecord.fnNumber);
+  header.setBodySize(container.size);
+  Uint8List headerData = header.serialize();
+  Uint8List bodyData = container.serialize();
   CRC16CCITT crc = new CRC16CCITT();
-  for(int i=0; i<headerData.length; i++){
-  if(i == MessageHeader.getSize()-2 || i == MessageHeader.getSize()-1) {
-  continue; //skip crc field
-  }
-  crc.update(headerData[i]);
+  for (int i = 0; i < headerData.length; i++){
+    if( i == MessageHeader.size - 2 || i == MessageHeader.size - 1) {
+      continue; //skip crc field
+    }
+    crc.update(headerData[i]);
   }
   for(int i=0; i<bodyData.length; i++){
-  crc.update(bodyData[i]);
+    crc.update(bodyData[i]);
   }
-  header.setCrc(crc.getValue());
+  header.setCrc(crc.value);
 
   Message response = send(new Message(header, container));
   return FnRecord.construct(response.getContainer().getBody());

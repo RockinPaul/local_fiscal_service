@@ -31,7 +31,7 @@ class MessageHeader {
   MessageHeaderFlags _flags;
   int _crc;
 
-  MessageHeader(Uint8List data) {
+  MessageHeader({Uint8List data}) {
     if (data == null) {
       List.copyRange(_headerSignature, 0, HEADER_SIGNATURE, 0, HEADER_SIGNATURE.length);
       List.copyRange(_appCode, 0, APPLICATION_CODE, 0, APPLICATION_CODE.length);
